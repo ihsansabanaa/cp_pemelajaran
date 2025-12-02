@@ -25,6 +25,21 @@ class DatabaseSeeder extends Seeder
             BidangKeahlianSeeder::class,
             MataPelajaranUmumSeeder::class,
             MataPelajaranKejuruanLengkapSeeder::class, // Semua mata pelajaran kejuruan
+            
+            // Seed Capaian Pembelajaran untuk setiap mata pelajaran
+            CapaianPembelajaranTJKTSeeder::class,
+            CapaianPembelajaranRPLSeeder::class,
+            CapaianPembelajaranDKVSeeder::class,
+            CapaianPembelajaranDPIBSeeder::class,
+            CapaianPembelajaranGeomatikaSeeder::class,
+            CapaianPembelajaranTAVSeeder::class,
+            CapaianPembelajaranTEISeeder::class,
+            CapaianPembelajaranTITLSeeder::class,
+            CapaianPembelajaranTMSeeder::class,
+            CapaianPembelajaranTKRSeeder::class,
+            CapaianPembelajaranTOISeeder::class,
+            CapaianPembelajaranTPFLSeeder::class,
+            CapaianPembelajaranTSMSeeder::class,
         ]);
     }
 }

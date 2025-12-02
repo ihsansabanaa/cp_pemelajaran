@@ -134,6 +134,29 @@
         .login-link a:hover {
             text-decoration: underline;
         }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #1976d2;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .info-box ul {
+            margin: 8px 0 0 20px;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -186,10 +209,10 @@
                         id="password" 
                         name="password" 
                         class="@error('password') error @enderror"
-                        placeholder="Minimal 6 karakter"
+                        placeholder="Minimal 8 karakter"
                         required
                     >
-                    <span class="password-hint">Minimal 6 karakter</span>
+                    <span class="password-hint">Minimal 8 karakter</span>
                     @error('password')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -211,6 +234,16 @@
 
             <div class="login-link">
                 Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
+            </div>
+
+            <div class="info-box">
+                <strong>📧 Informasi Penting:</strong>
+                <ul>
+                    <li>Gunakan <strong>email asli</strong> Anda</li>
+                    <li>Setelah registrasi, cek email untuk verifikasi</li>
+                    <li>Email dikirim dari: <strong>gtk1313131@gmail.com</strong></li>
+                    <li>Cek folder spam jika tidak menerima email</li>
+                </ul>
             </div>
         </div>
     </div>

@@ -1,0 +1,121 @@
+===================================================================
+      CARA MENDAPATKAN GOOGLE CLIENT ID DAN SECRET
+===================================================================
+
+LANGKAH 1: Buka Google Cloud Console
+-------------------------------------
+Buka browser dan kunjungi:
+https://console.cloud.google.com/
+
+
+LANGKAH 2: Buat Project Baru
+------------------------------
+1. Klik "Select a project" di pojok kiri atas
+2. Klik tombol "NEW PROJECT"
+3. Nama project: CP Pembelajaran
+4. Klik "CREATE"
+5. Tunggu beberapa detik sampai project selesai dibuat
+
+
+LANGKAH 3: Konfigurasi OAuth Consent Screen
+--------------------------------------------
+1. Di menu samping kiri, klik "APIs & Services"
+2. Klik "OAuth consent screen"
+3. Pilih "External" (untuk semua user Gmail)
+4. Klik "CREATE"
+5. Isi form:
+   - App name: CP Pembelajaran
+   - User support email: (pilih email Anda)
+   - Developer contact email: (isi email Anda)
+6. Klik "SAVE AND CONTINUE"
+7. Di halaman Scopes, langsung klik "SAVE AND CONTINUE"
+8. Di halaman Test users, langsung klik "SAVE AND CONTINUE"
+9. Review dan klik "BACK TO DASHBOARD"
+
+
+LANGKAH 4: Buat OAuth Client ID
+---------------------------------
+1. Di menu samping kiri, klik "Credentials"
+2. Klik tombol "+ CREATE CREDENTIALS"
+3. Pilih "OAuth client ID"
+4. Application type: pilih "Web application"
+5. Name: CP Pembelajaran Web
+6. Authorized redirect URIs:
+   - Klik "ADD URI"
+   - Isi: http://127.0.0.1:8000/auth/google/callback
+   - Klik "ADD URI" lagi
+   - Isi: http://localhost:8000/auth/google/callback
+7. Klik "CREATE"
+
+
+LANGKAH 5: Salin Client ID dan Secret
+---------------------------------------
+Setelah klik CREATE, akan muncul popup berisi:
+- Client ID: (ini yang perlu dicopy)
+- Client Secret: (ini juga perlu dicopy)
+
+JANGAN TUTUP POPUP DULU!
+Copy kedua nilai tersebut.
+
+
+LANGKAH 6: Masukkan ke File .env
+----------------------------------
+1. Buka file .env di project Laravel
+2. Cari baris:
+   GOOGLE_CLIENT_ID=
+   GOOGLE_CLIENT_SECRET=
+
+3. Paste nilai yang sudah dicopy:
+   GOOGLE_CLIENT_ID=paste_client_id_disini
+   GOOGLE_CLIENT_SECRET=paste_client_secret_disini
+
+4. SAVE file .env
+
+
+LANGKAH 7: Clear Cache Laravel
+--------------------------------
+Buka terminal dan jalankan:
+php artisan config:clear
+
+
+LANGKAH 8: Test Login
+-----------------------
+1. Buka browser: http://127.0.0.1:8000/login
+2. Klik tombol "Login dengan Google"
+3. Pilih akun Google Anda
+4. Berhasil! Anda akan masuk ke dashboard
+
+
+===================================================================
+TROUBLESHOOTING
+===================================================================
+
+Error: "Missing required parameter: client_id"
+→ Berarti GOOGLE_CLIENT_ID masih kosong di .env
+→ Pastikan sudah paste Client ID yang benar
+→ Jalankan: php artisan config:clear
+
+Error: "redirect_uri_mismatch"  
+→ URL callback tidak cocok
+→ Pastikan di Google Console sudah tambahkan:
+  http://127.0.0.1:8000/auth/google/callback
+
+Error: "invalid_client"
+→ Client Secret salah
+→ Copy ulang dari Google Console
+
+Error: "Access blocked"
+→ Tambahkan email Anda sebagai Test User
+→ Di OAuth consent screen > Test users > Add users
+
+
+===================================================================
+CATATAN PENTING
+===================================================================
+
+1. JANGAN share Client ID dan Secret ke orang lain
+2. JANGAN commit file .env ke Git/GitHub
+3. Untuk production nanti, ganti redirect URI ke domain asli
+4. User yang login via Google otomatis terverifikasi emailnya
+
+===================================================================
