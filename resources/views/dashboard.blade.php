@@ -1,370 +1,150 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="corporate">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - CP Pembelajaran</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .navbar-user {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-info {
-            text-align: right;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .user-email {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-logout:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .welcome-card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-
-        .welcome-card h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 32px;
-        }
-
-        .welcome-card p {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .filter-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-
-        .filter-card h2 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 0;
-        }
-
-        .filter-row-last {
-            display: grid;
-            grid-template-columns: 1fr 1fr 200px;
-            gap: 20px;
-            margin-top: 20px;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .form-group select {
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background: white;
-            cursor: pointer;
-        }
-
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group select:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
-        }
-
-        .btn-filter {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-            height: 46px;
-        }
-
-        .btn-filter:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-filter:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .results-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            display: none;
-        }
-
-        .results-card.show {
-            display: block;
-        }
-
-        .results-card h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .cp-detail-item {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-left: 4px solid #667eea;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .cp-detail-item h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .cp-meta {
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #555;
-        }
-
-        .cp-meta strong {
-            color: #333;
-        }
-
-        .cp-detail-content {
-            color: #555;
-            line-height: 1.8;
-        }
-
-        .cp-detail-content h4 {
-            color: #667eea;
-            margin-top: 20px;
-            margin-bottom: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .cp-detail-content h4:first-child {
-            margin-top: 0;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            color: #155724;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-brand">
-            📚 CP Pembelajaran
+<body class="bg-base-200">
+    <!-- Navbar -->
+    <div class="navbar bg-primary text-primary-content shadow-lg">
+        <div class="flex-1">
+            <a class="btn btn-ghost normal-case text-xl">
+                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                </svg>
+                CP Pembelajaran
+            </a>
         </div>
-        <div class="navbar-user">
-            <div class="user-info">
-                <div class="user-name">{{ auth()->user()->name }}</div>
-                <div class="user-email">{{ auth()->user()->email }}</div>
+        <div class="flex-none gap-2">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder">
+                    <div class="bg-neutral-focus text-neutral-content rounded-full w-10">
+                        <span class="text-xl">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                    </div>
+                </label>
+                <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 text-base-content rounded-box w-52">
+                    <li class="menu-title">
+                        <span>{{ auth()->user()->name }}</span>
+                    </li>
+                    <li><a class="text-xs opacity-60">{{ auth()->user()->email }}</a></li>
+                    <div class="divider my-0"></div>
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full text-left">Logout</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
-            <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                @csrf
-                <button type="submit" class="btn-logout">Logout</button>
-            </form>
         </div>
-    </nav>
+    </div>
 
-    <div class="container">
-        <div class="welcome-card">
-            <h1>Selamat Datang, {{ auth()->user()->name }}! 👋</h1>
-            <p>Gunakan filter di bawah untuk mencari Capaian Pembelajaran (CP) berdasarkan bidang keahlian, kompetensi, program, mata pelajaran, dan fase.</p>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Welcome Card -->
+        <div class="card bg-base-100 shadow-xl mb-6">
+            <div class="card-body">
+                <h1 class="card-title text-3xl">Selamat Datang, {{ auth()->user()->name }}! 👋</h1>
+                <p class="opacity-70">Gunakan filter di bawah untuk mencari Capaian Pembelajaran (CP) berdasarkan bidang keahlian, kompetensi, program, mata pelajaran, dan fase.</p>
+            </div>
         </div>
 
         @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+            <div class="alert alert-success shadow-lg mb-6">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>{{ session('success') }}</span>
+                </div>
             </div>
         @endif
 
-        <div class="filter-card">
-            <h2>🔍 Filter Capaian Pembelajaran</h2>
-            
-            <div class="filter-grid">
-                <div class="form-group">
-                    <label for="bidang_keahlian">Bidang Keahlian</label>
-                    <select id="bidang_keahlian" name="bidang_keahlian" required>
-                        <option value="">-- Pilih Bidang Keahlian --</option>
-                        @foreach($bidangKeahlian as $bidang)
-                            <option value="{{ $bidang->id_bidang }}">{{ $bidang->nama_bidang }}</option>
-                        @endforeach
-                    </select>
+        <!-- Filter Card -->
+        <div class="card bg-base-100 shadow-xl mb-6">
+            <div class="card-body">
+                <h2 class="card-title text-2xl mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Filter Capaian Pembelajaran
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Bidang Keahlian</span>
+                        </label>
+                        <select id="bidang_keahlian" class="select select-bordered w-full">
+                            <option value="">-- Pilih Bidang Keahlian --</option>
+                            @foreach($bidangKeahlian as $bidang)
+                                <option value="{{ $bidang->id_bidang }}">{{ $bidang->nama_bidang }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Program Keahlian</span>
+                        </label>
+                        <select id="program_keahlian" class="select select-bordered w-full" disabled>
+                            <option value="">-- Pilih Program Keahlian --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Kompetensi Keahlian</span>
+                        </label>
+                        <select id="kompetensi_keahlian" class="select select-bordered w-full" disabled>
+                            <option value="">-- Pilih Kompetensi Keahlian --</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="program_keahlian">Program Keahlian</label>
-                    <select id="program_keahlian" name="program_keahlian" disabled required>
-                        <option value="">-- Pilih Program Keahlian --</option>
-                    </select>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Fase</span>
+                        </label>
+                        <select id="fase" class="select select-bordered w-full">
+                            <option value="">-- Pilih Fase --</option>
+                            @foreach($fase as $f)
+                                <option value="{{ $f->id_fase }}">Fase {{ $f->nama_fase }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="kompetensi_keahlian">Kompetensi Keahlian</label>
-                    <select id="kompetensi_keahlian" name="kompetensi_keahlian" disabled required>
-                        <option value="">-- Pilih Kompetensi Keahlian --</option>
-                    </select>
-                </div>
-            </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Mata Pelajaran</span>
+                        </label>
+                        <select id="mata_pelajaran" class="select select-bordered w-full" disabled>
+                            <option value="">-- Pilih Mata Pelajaran --</option>
+                        </select>
+                    </div>
 
-            <div class="filter-row-last">
-                <div class="form-group">
-                    <label for="fase">Fase</label>
-                    <select id="fase" name="fase" required>
-                        <option value="">-- Pilih Fase --</option>
-                        @foreach($fase as $f)
-                            <option value="{{ $f->id_fase }}">Fase {{ $f->nama_fase }}</option>
-                        @endforeach
-                    </select>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text opacity-0">Button</span>
+                        </label>
+                        <button type="button" id="btn_cari" class="btn btn-primary w-full" disabled>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            Cari
+                        </button>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="mata_pelajaran">Mata Pelajaran</label>
-                    <select id="mata_pelajaran" name="mata_pelajaran" disabled required>
-                        <option value="">-- Pilih Mata Pelajaran --</option>
-                    </select>
-                </div>
-
-                <button type="button" id="btn_cari" class="btn-filter" disabled>
-                    🔍 Cari
-                </button>
             </div>
         </div>
 
-        <div class="results-card" id="results_card">
-            <h2>📋 Hasil Pencarian</h2>
-            <div id="results_content"></div>
+        <!-- Results Card -->
+        <div id="results_card" class="card bg-base-100 shadow-xl hidden">
+            <div class="card-body">
+                <h2 class="card-title text-2xl mb-4">📋 Hasil Pencarian</h2>
+                <div id="results_content"></div>
+            </div>
         </div>
     </div>
 
@@ -384,7 +164,7 @@
             resetDropdown(programKeahlianSelect, '-- Pilih Program Keahlian --');
             resetDropdown(kompetensiKeahlianSelect, '-- Pilih Kompetensi Keahlian --');
             resetDropdown(mataPelajaranSelect, '-- Pilih Mata Pelajaran --');
-            resultsCard.classList.remove('show');
+            resultsCard.classList.add('hidden');
             checkFormValidity();
 
             if (idBidang) {
@@ -404,7 +184,7 @@
             const idProgram = this.value;
             resetDropdown(kompetensiKeahlianSelect, '-- Pilih Kompetensi Keahlian --');
             resetDropdown(mataPelajaranSelect, '-- Pilih Mata Pelajaran --');
-            resultsCard.classList.remove('show');
+            resultsCard.classList.add('hidden');
             checkFormValidity();
 
             if (idProgram) {
@@ -427,30 +207,16 @@
             const idKompetensi = kompetensiKeahlianSelect.value;
             const idFase = faseSelect.value;
             
-            console.log('loadMataPelajaran called:', { idKompetensi, idFase });
-            
             resetDropdown(mataPelajaranSelect, '-- Pilih Mata Pelajaran --');
-            resultsCard.classList.remove('show');
+            resultsCard.classList.add('hidden');
             checkFormValidity();
 
             if (idKompetensi && idFase) {
-                const url = `/api/mata-pelajaran/${idKompetensi}/${idFase}`;
-                console.log('Fetching:', url);
-                
-                fetch(url)
-                    .then(response => {
-                        console.log('Response status:', response.status);
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
+                fetch(`/api/mata-pelajaran/${idKompetensi}/${idFase}`)
+                    .then(response => response.json())
                     .then(data => {
-                        console.log('Mata pelajaran data:', data);
                         mataPelajaranSelect.disabled = false;
-                        
                         if (data.length === 0) {
-                            console.warn('No mata pelajaran found for this combination');
                             const option = new Option('-- Tidak ada mata pelajaran --', '');
                             mataPelajaranSelect.add(option);
                         } else {
@@ -459,12 +225,6 @@
                                 mataPelajaranSelect.add(option);
                             });
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error loading mata pelajaran:', error);
-                        mataPelajaranSelect.disabled = false;
-                        const option = new Option('-- Error memuat data --', '');
-                        mataPelajaranSelect.add(option);
                     });
             }
         }
@@ -480,8 +240,8 @@
                 id_fase: faseSelect.value
             };
 
-            resultsContent.innerHTML = '<div class="loading">⏳ Mencari data...</div>';
-            resultsCard.classList.add('show');
+            resultsContent.innerHTML = '<div class="flex justify-center items-center p-8"><span class="loading loading-spinner loading-lg"></span></div>';
+            resultsCard.classList.remove('hidden');
 
             fetch('/api/cp-detail', {
                 method: 'POST',
@@ -496,14 +256,14 @@
                 if (data.success) {
                     displayResults(data.data);
                 } else {
-                    resultsContent.innerHTML = `<div class="no-data"><h3>❌ ${data.message}</h3></div>`;
+                    resultsContent.innerHTML = `<div class="alert alert-warning"><span>❌ ${data.message}</span></div>`;
                 }
             });
         });
 
         function displayResults(data) {
             if (data.length === 0) {
-                resultsContent.innerHTML = '<div class="no-data"><h3>📭 Tidak ada data CP Detail</h3></div>';
+                resultsContent.innerHTML = '<div class="alert alert-info"><span>📭 Tidak ada data CP Detail</span></div>';
                 return;
             }
 
@@ -516,20 +276,19 @@
                 const fase = mapel.fase;
 
                 html += `
-                    <div class="cp-detail-item">
-                        <h3>${mapel.nama_mapel}</h3>
-                        <div class="cp-meta">
-                            <strong>Fase:</strong> ${fase.nama_fase} | 
-                            <strong>Bidang:</strong> ${bidang.nama_bidang} | 
-                            <strong>Program:</strong> ${program.nama_program} | 
-                            <strong>Kompetensi:</strong> ${kompetensi.nama_kompetensi}
-                        </div>
-                        <div class="cp-detail-content">
-                            ${cp.rasional ? `<h4>📝 Rasional</h4><div style="text-align: justify;">${formatText(cp.rasional)}</div>` : ''}
-                            ${cp.tujuan ? `<h4>🎯 Tujuan</h4><div style="text-align: justify;">${formatText(cp.tujuan)}</div>` : ''}
-                            ${cp.karakteristik ? `<h4>⭐ Karakteristik</h4><div style="text-align: justify;">${formatText(cp.karakteristik)}</div>` : ''}
-                            ${cp.capaian_pembelajaran ? `<h4>🎓 Capaian Pembelajaran</h4><div style="text-align: justify;">${formatText(cp.capaian_pembelajaran)}</div>` : ''}
-                            ${cp.uraian_cp ? `<h4>📚 Uraian CP</h4><div style="text-align: justify;">${formatUraianCP(cp.uraian_cp)}</div>` : ''}
+                    <div class="card bg-base-100 border border-base-300 mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">${mapel.nama_mapel}</h3>
+                            <div class="badge badge-outline badge-info mb-4">
+                                Fase ${fase.nama_fase} | ${bidang.nama_bidang} | ${program.nama_program} | ${kompetensi.nama_kompetensi}
+                            </div>
+                            <div class="prose max-w-none">
+                                ${cp.rasional ? `<h4 class="text-sm font-bold text-primary mt-4 mb-2">📝 Rasional</h4><div class="text-sm">${formatText(cp.rasional)}</div>` : ''}
+                                ${cp.tujuan ? `<h4 class="text-sm font-bold text-primary mt-4 mb-2">🎯 Tujuan</h4><div class="text-sm">${formatText(cp.tujuan)}</div>` : ''}
+                                ${cp.karakteristik ? `<h4 class="text-sm font-bold text-primary mt-4 mb-2">⭐ Karakteristik</h4><div class="text-sm">${formatText(cp.karakteristik)}</div>` : ''}
+                                ${cp.capaian_pembelajaran ? `<h4 class="text-sm font-bold text-primary mt-4 mb-2">🎓 Capaian Pembelajaran</h4><div class="text-sm">${formatText(cp.capaian_pembelajaran)}</div>` : ''}
+                                ${cp.uraian_cp ? `<h4 class="text-sm font-bold text-primary mt-4 mb-2">📚 Uraian CP</h4><div class="text-sm">${formatUraianCP(cp.uraian_cp)}</div>` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -540,14 +299,12 @@
 
         function formatText(text) {
             if (!text) return '';
-            // Replace newlines with <br> and trim
             return text.replace(/\n/g, '<br>').trim();
         }
 
         function formatUraianCP(text) {
             if (!text) return '';
             
-            // Split by numbering pattern like "1. ", "2. ", etc
             let sections = text.split(/\n(?=\d+\.\s)/);
             let formattedHTML = '';
             
@@ -555,43 +312,34 @@
                 section = section.trim();
                 if (!section) return;
                 
-                // Extract main number and title (e.g., "1. Basis Data")
                 let mainMatch = section.match(/^(\d+)\.\s+(.+?)(?:\n|$)/);
                 if (!mainMatch) return;
                 
                 let mainNumber = mainMatch[1];
                 let mainTitle = mainMatch[2].trim();
                 
-                formattedHTML += `<div style="margin-bottom: 25px;">`;
-                formattedHTML += `<div style="margin-bottom: 12px; font-weight: 700; font-size: 15px;">${mainNumber}. ${mainTitle}</div>`;
+                formattedHTML += `<div class="mb-6">`;
+                formattedHTML += `<div class="font-bold text-sm mb-3">${mainNumber}. ${mainTitle}</div>`;
                 
-                // Get the rest of the content after the main title
                 let remainingContent = section.substring(mainMatch[0].length).trim();
-                
-                // Split by bullet points or dash points
                 let bulletPoints = remainingContent.split(/\n(?=[-•]\s)/);
                 
                 bulletPoints.forEach(point => {
                     point = point.trim();
                     if (!point) return;
                     
-                    // Remove leading bullet/dash
                     point = point.replace(/^[-•]\s*/, '');
-                    
-                    // Split into lines
                     let lines = point.split(/\n/).map(l => l.trim()).filter(l => l);
                     if (lines.length === 0) return;
                     
-                    // First line is the sub-heading (bold)
                     let subHeading = lines[0];
                     
-                    formattedHTML += `<div style="margin-left: 20px; margin-bottom: 15px;">`;
-                    formattedHTML += `<div style="font-weight: 600; margin-bottom: 5px;">• ${subHeading}</div>`;
+                    formattedHTML += `<div class="ml-5 mb-3">`;
+                    formattedHTML += `<div class="font-semibold text-xs mb-1">• ${subHeading}</div>`;
                     
-                    // Remaining lines are the explanation
                     if (lines.length > 1) {
                         let explanation = lines.slice(1).join(' ');
-                        formattedHTML += `<div style="margin-left: 15px; color: #555; line-height: 1.6;">${explanation}</div>`;
+                        formattedHTML += `<div class="ml-4 text-xs opacity-70 leading-relaxed">${explanation}</div>`;
                     }
                     
                     formattedHTML += `</div>`;

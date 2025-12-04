@@ -82,6 +82,9 @@ class AuthController extends Controller
     // Dashboard (halaman setelah login)
     public function dashboard()
     {
-        return view('dashboard');
+        $bidangKeahlian = \App\Models\BidangKeahlian::all();
+        $fase = \App\Models\Fase::all();
+        
+        return view('dashboard', compact('bidangKeahlian', 'fase'));
     }
 }
