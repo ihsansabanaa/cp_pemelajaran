@@ -32,9 +32,9 @@
                     <li><a class="text-xs opacity-60">{{ auth()->user()->email }}</a></li>
                     <div class="divider my-0"></div>
                     <li>
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form action="{{ route('logout') }}" method="POST" id="logoutForm">
                             @csrf
-                            <button type="submit" class="w-full text-left">Logout</button>
+                            <button type="button" onclick="confirmLogout()" class="w-full text-left">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -360,6 +360,12 @@
             const isValid = bidangKeahlianSelect.value && programKeahlianSelect.value && 
                            kompetensiKeahlianSelect.value && faseSelect.value && mataPelajaranSelect.value;
             btnCari.disabled = !isValid;
+        }
+
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                document.getElementById('logoutForm').submit();
+            }
         }
     </script>
 </body>
