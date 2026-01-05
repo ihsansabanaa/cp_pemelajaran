@@ -38,10 +38,19 @@ Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallbac
 // Protected Routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
-    
+
+    // RPP Routes
+    Route::get('/rpp/create', [\App\Http\Controllers\RppController::class, 'create'])->name('rpp.create');
+    Route::get('/rpp', [\App\Http\Controllers\RppController::class, 'index'])->name('rpp.index');
+    Route::get('/rpp/{id}', [\App\Http\Controllers\RppController::class, 'show'])->name('rpp.show');
+    Route::post('/api/rpp/store', [\App\Http\Controllers\RppController::class, 'store'])->name('rpp.store');
+    Route::post('/api/rpp/save-generated', [\App\Http\Controllers\RppController::class, 'saveGenerated'])->name('rpp.saveGenerated');
+    Route::delete('/api/rpp/{id}', [\App\Http\Controllers\RppController::class, 'destroy'])->name('rpp.destroy');
+    Route::get('/rpp/{id}/download-pdf', [\App\Http\Controllers\RppController::class, 'downloadPdf'])->name('rpp.downloadPdf');
+
     // API Routes for Dashboard
     Route::get('/api/program-keahlian/{idBidang}', [\App\Http\Controllers\Api\ApiController::class, 'getProgramKeahlian']);
-    Route::get('/api/kompetensi-keahlian/{idProgram}', [\App\Http\Controllers\Api\ApiController::class, 'getKompetensiKeahlian']);
-    Route::get('/api/mata-pelajaran/{idKompetensi}/{idFase}', [\App\Http\Controllers\Api\ApiController::class, 'getMataPelajaran']);
+    Route::get('/api/konsentrasi-keahlian/{idProgram}', [\App\Http\Controllers\Api\ApiController::class, 'getKonsentrasiKeahlian']);
+    Route::get('/api/mata-pelajaran/{idKonsentrasi}/{idFase}', [\App\Http\Controllers\Api\ApiController::class, 'getMataPelajaran']);
     Route::post('/api/cp-detail', [\App\Http\Controllers\Api\ApiController::class, 'getCpDetail']);
 });

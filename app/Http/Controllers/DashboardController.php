@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BidangKeahlian;
 use App\Models\ProgramKeahlian;
-use App\Models\KompetensiKeahlian;
+use App\Models\KonsentrasiKeahlian;
 use App\Models\MataPelajaran;
 use App\Models\Fase;
 use App\Models\CpDetail;
@@ -29,24 +29,24 @@ class DashboardController extends Controller
         return response()->json($programKeahlian);
     }
 
-    public function getKompetensiKeahlian($id_program)
+    public function getKonsentrasiKeahlian($id_program)
     {
-        $kompetensiKeahlian = KompetensiKeahlian::where('id_program', $id_program)
-            ->orderBy('nama_kompetensi')
+        $konsentrasiKeahlian = KonsentrasiKeahlian::where('id_program', $id_program)
+            ->orderBy('nama_konsentrasi')
             ->get();
         
-        return response()->json($kompetensiKeahlian);
+        return response()->json($konsentrasiKeahlian);
     }
 
-    public function getMataPelajaran($id_kompetensi, $id_fase)
+    public function getMataPelajaran($id_konsentrasi, $id_fase)
     {
         \Log::info('getMataPelajaran called', [
-            'id_kompetensi' => $id_kompetensi,
+            'id_konsentrasi' => $id_konsentrasi,
             'id_fase' => $id_fase,
             'user_id' => auth()->id()
         ]);
 
-        $mataPelajaran = MataPelajaran::where('id_kompetensi', $id_kompetensi)
+        $mataPelajaran = MataPelajaran::where('id_konsentrasi', $id_konsentrasi)
             ->where('id_fase', $id_fase)
             ->orderBy('nama_mapel')
             ->get();
@@ -62,18 +62,19 @@ class DashboardController extends Controller
     public function getCpDetail(Request $request)
     {
         $request->validate([
-            'id_bidang' => 'required',
-            'id_program' => 'required',
-            'id_kompetensi' => 'required',
-            'id_mapel' => 'required',
+            'id_konsentrasi' => 'required',
             'id_fase' => 'required'
         ]);
 
-        $cpDetail = CpDetail::with(['mataPelajaran.kompetensiKeahlian.programKeahlian.bidangKeahlian', 'mataPelajaran.fase'])
+        $cpDetail = CpDetail::with(['mataPelajaran.konsentrasiKeahlian.programKeahlian.bidangKeahlian', 'mataPelajaran.fase'])
             ->whereHas('mataPelajaran', function($query) use ($request) {
-                $query->where('id_mapel', $request->id_mapel)
-                      ->where('id_kompetensi', $request->id_kompetensi)
+                $query->where('id_konsentrasi', $request->id_konsentrasi)
                       ->where('id_fase', $request->id_fase);
+                
+                // If id_mapel provided, filter by it (for umum path)
+                if ($request->filled('id_mapel')) {
+                    $query->where('id_mapel', $request->id_mapel);
+                }
             })
             ->get();
 

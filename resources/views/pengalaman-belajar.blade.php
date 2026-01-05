@@ -6,7 +6,7 @@
     <title>Pengalaman Belajar - CP Pembelajaran SMK</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;909&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50 antialiased" style="font-family: 'Inter', sans-serif;">
@@ -26,7 +26,7 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <a href="/" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white hover:text-primary-200 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -34,15 +34,54 @@
                         <span>Beranda</span>
                     </a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
-                            Dashboard
-                        </a>
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                                <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-sm font-semibold text-white">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-white/80">{{ auth()->user()->email }}</div>
+                                </div>
+                                <svg id="userMenuIcon" class="w-4 h-4 text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200" style="z-index: 9999;">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</div>
+                                </div>
+                                <div class="p-2">
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST" id="logoutForm">
+                                        @csrf
+                                        <button type="button" onclick="confirmLogout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                        </svg>
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     @else
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            <span class="hidden md:inline">Login</span>
+                            <span>Login</span>
+                        </a>
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-primary-900 bg-white rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                            <span>Daftar</span>
                         </a>
                     @endauth
                 </div>
@@ -63,152 +102,375 @@
     <!-- Content Section -->
     <section class="py-12 px-4">
         <div class="max-w-6xl mx-auto">
-            <!-- Introduction with SVG -->
-            <div class="grid md:grid-cols-2 gap-12 items-center mb-6">
-                <!-- Introduction Text -->
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Pengantar Pengalaman Belajar</h2>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        Pengalaman belajar dirancang untuk memberikan pembelajaran yang bermakna, kontekstual, dan relevan dengan dunia industri. Melalui pendekatan yang terstruktur, peserta didik akan mengembangkan kompetensi yang dibutuhkan untuk menjadi lulusan yang siap kerja dan berdaya saing.
-                    </p>
-                </div>
-                <!-- SVG Illustration -->
-                <div class="flex justify-center md:justify-end">
-                    <div class="w-full max-w-md">
-                        <img src="{{ asset('images/Research paper-rafiki.svg') }}" alt="Ilustrasi Pengalaman Belajar" class="w-full h-auto">
+            <!-- Introduction with Circular Diagram -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
+                <!-- Circular Diagram (Left) -->
+                <div class="flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        <img src="{{ asset('images/pengalaman belajar.svg') }}" alt="Diagram Pengalaman Belajar" class="w-full h-auto">
                     </div>
                 </div>
-            </div>
-
-            <!-- 4 Cards Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <!-- Card 1: Identifikasi -->
-                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:border-primary hover:shadow-md transition">
-                    <div class="mb-4">
-                        <div class="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-3">
-                            <span class="text-primary font-bold text-xl">1</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Identifikasi</h3>
-                    </div>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• Mengidentifikasi kesiapan murid</li>
-                        <li>• Memahami karakteristik materi pelajaran</li>
-                        <li>• Menentukan dimensi profil Lulusan</li>
-                    </ul>
-                </div>
-
-                <!-- Card 2: Desain Pembelajaran -->
-                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:border-primary hover:shadow-md transition">
-                    <div class="mb-4">
-                        <div class="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-3">
-                            <span class="text-primary font-bold text-xl">2</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Desain Pembelajaran</h3>
-                    </div>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• Menentukan tujuan pembelajaran</li>
-                        <li>• Menentukan kerangka pembelajaran</li>
-                    </ul>
-                </div>
-
-                <!-- Card 3: Pengalaman Belajar -->
-                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:border-primary hover:shadow-md transition">
-                    <div class="mb-4">
-                        <div class="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-3">
-                            <span class="text-primary font-bold text-xl">3</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Pengalaman Belajar</h3>
-                    </div>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• Merancang pembelajaran dengan prinsip berkesadaran</li>
-                        <li>• Mendeskripsikan pengalaman belajar</li>
-                    </ul>
-                </div>
-
-                <!-- Card 4: Asesmen -->
-                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:border-primary hover:shadow-md transition">
-                    <div class="mb-4">
-                        <div class="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center mb-3">
-                            <span class="text-primary font-bold text-xl">4</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900">Asesmen</h3>
-                    </div>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• Asesmen pada awal pembelajaran</li>
-                        <li>• Asesmen pada proses pembelajaran</li>
-                        <li>• Asesmen pada akhir pembelajaran</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Detail Section 1: Identifikasi Kesiapan Murid -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">1. Mengidentifikasi Kesiapan Murid</h2>
                 
+                <!-- Three Main Points (Right) -->
                 <div class="space-y-6">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">a. Analisis Pengetahuan Awal</h3>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Memahami</h3>
                         <p class="text-gray-700 leading-relaxed">
-                            Guru dapat menggunakan pre-test, diskusi awal, pertanyaan pemantik, dll. untuk mengukur pemahaman awal murid terhadap konsep yang akan dipelajari lalu gunakan hasilnya untuk mengidentifikasi kesenjangan pemahaman yang mungkin muncul dan menjadi hambatan dalam pembelajaran.
+                            Tahap awal peserta didik untuk aktif <strong>mengkonstruksi pengetahuan agar dapat memahami secara mendalam konsep atau materi dari berbagai sumber dan konteks.</strong> Pengetahuan pada fase ini terdiri dari pengetahuan esensial, pengetahuan aplikatif, dan pengetahuan nilai dan karakter.
                         </p>
                     </div>
                     
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">b. Observasi dan Refleksi</h3>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Mengaplikasi</h3>
                         <p class="text-gray-700 leading-relaxed">
-                            Amati bagaimana murid merespon pertanyaan terbuka, tantangan berpikir kritis, atau tugas eksploratif. Perhatikan tingkat keterlibatan, rasa ingin tahu, dan kemampuan mereka dalam menghubungkan konsep baru dengan pengalaman sebelumnya.
+                            Pengalaman belajar yang menunjukan aktivitas peserta didik <strong>mengaplikasi pengetahuan dalam kehidupan secara kontekstual.</strong> Pengetahuan yang diperoleh oleh peserta didik melalui pendalaman pengetahuan.
                         </p>
                     </div>
                     
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">c. Inventarisasi Gaya Belajar dan Minat</h3>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Merefleksi</h3>
                         <p class="text-gray-700 leading-relaxed">
-                            Gunakan angket atau wawancara singkat untuk mengetahui gaya belajar dan minat murid. Guru dapat menyesuaikan strategi pembelajaran agar lebih relevan dan menarik bagi mereka.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">d. Analisis Keterampilan Berpikir Tingkat Tinggi (HOTS)</h3>
-                        <p class="text-gray-700 leading-relaxed">
-                            Berikan tugas berbasis pemecahan masalah atau proyek kecil untuk melihat sejauh mana murid dapat mengambil keputusan untuk menemukan solusi dari suatu permasalahan. Identifikasi murid yang membutuhkan pendampingan lebih lanjut.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">e. Konteks Sosial dan Emosional</h3>
-                        <p class="text-gray-700 leading-relaxed">
-                            Perhatikan faktor sosial dan emosional yang dapat memengaruhi kesiapan belajar, seperti rasa percaya diri, motivasi, atau hambatan psikologis dalam proses pembelajaran. Gunakan pendekatan diferensiasi untuk menyesuaikan strategi pembelajaran dengan kebutuhan individu maupun kelompok.
-                        </p>
-                    </div>
-                    
-                    <div class="pt-4 border-t border-gray-200">
-                        <p class="text-gray-700 leading-relaxed">
-                            <span class="font-semibold text-gray-900">Kesimpulan:</span> Dengan mengidentifikasi kesiapan murid secara komprehensif, guru dapat menyusun perencanaan pembelajaran mendalam yang lebih efektif, memastikan bahwa setiap peserta didik mendapatkan pengalaman belajar yang bermakna, berkesadaran, dan menggembirakan sesuai dengan potensi mereka yang beragam.
+                            Proses di mana peserta didik mengevaluasi dan memaknai proses serta hasil dari tindakan atau praktik nyata yang telah mereka lakukan. <strong>Tahap refleksi melibatkan regulasi diri sebagai kemampuan individu untuk mengelola proses belajarnya secara mandiri,</strong> meliputi perencanaan, pelaksanaan, pengawasan, dan evaluasi terhadap cara belajar mereka.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Detail Section 2: Karakteristik Mata Pelajaran -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">2. Mengidentifikasi Karakteristik Mata Pelajaran</h2>
-                
-                <ul class="space-y-3 text-gray-700 leading-relaxed">
-                    <li>• Mengenali sifat dasar mata pelajaran, apakah menekankan konsep, keterampilan, atau karakter</li>
-                    <li>• Menganalisis kompetensi (pengetahuan esensial dan aplikatif)</li>
-                    <li>• Memastikan bahwa tujuan pembelajaran mendorong eksplorasi konsep, bukan sekadar hafalan</li>
-                    <li>• Mengidentifikasi keterkaitan setiap mata pelajaran dengan kehidupan nyata agar peserta didik melihat relevansi pembelajaran</li>
-                    <li>• Mengidentifikasi potensi mata pelajaran terhadap pencapaian <strong class="text-primary">8 Dimensi Profil Lulusan</strong></li>
-                    <li>• Memilih strategi pembelajaran yang mendorong murid merancang proyek, melakukan penelitian, atau menyelesaikan tantangan berbasis data sesuai mata pelajaran</li>
-                </ul>
+            <!-- Memahami Section (1) -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Pengalaman Belajar</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Memahami</h2>
+                    <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                        <span class="text-gray-900 font-bold text-lg">1</span>
+                    </div>
+                </div>
+
+                <!-- Three Columns Table -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <!-- Jenis Pengetahuan -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Jenis Pengetahuan</h3>
+                        </div>
+                        <div class="p-6 min-h-[280px]">
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Pengetahuan Esensial</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Pengetahuan Aplikatif</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Pengetahuan Nilai dan Karakter</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Karakteristik -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Karakteristik</h3>
+                        </div>
+                        <div class="p-6 min-h-[280px]">
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Menghubungkan pengetahuan baru dengan pengetahuan sebelumnya</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Menstimulasi proses berpikir peserta didik</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Menghubungkan dengan konteks nyata dan/atau kehidupan sehari-hari</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Memberikan kebebasan eksploratif dan kolaboratif</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Menanamkan nilai-nilai moral dan etika dan nilai positif lainnya</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Mengaitkan pembelajaran dengan pembentukan karakter peserta didik</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contoh -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Contoh</h3>
+                        </div>
+                        <div class="p-6 min-h-[280px]">
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Mengeksplorasi pengalaman-pengalaman peserta didik terhadap permasalahan sosial di masyarakat sebelum menyampaikan topik permasalahan sosial pada pembelajaran IPS</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Memberikan data kemiskinan di Indonesia serta meminta peserta didik untuk memahami dan memberikan tanggapan</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Three Type Cards Below -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Pengetahuan Esensial -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Pengetahuan Esensial</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                Pengetahuan dasar yang fundamental dalam suatu bidang atau disiplin ilmu, yang harus dipahami dan dikuasai untuk membangun pemahaman yang lebih kompleks dan dapat diterapkan dalam berbagai konteks
+                            </p>
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <p class="text-xs font-semibold text-gray-900 mb-2">Contoh:</p>
+                                <p class="text-xs text-gray-600">Bahasa (Kosa kata, tata bahasa dasar, pengetahuan wacana, dan empat keterampilan berbahasa)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pengetahuan Aplikatif -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Pengetahuan Aplikatif</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                Pengetahuan yang berfokus pada penerapan konsep, teori, atau keterampilan dalam situasi nyata. Pengetahuan ini digunakan untuk menyelesaikan masalah, membuat keputusan, atau menciptakan sesuatu yang berdampak.
+                            </p>
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <p class="text-xs font-semibold text-gray-900 mb-2">Contoh:</p>
+                                <p class="text-xs text-gray-600">Bahasa (Memahami cara menggunakan keterampilan menulis untuk membuat laporan atau bahan presentasi yang efektif)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pengetahuan Nilai dan Karakter -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Pengetahuan Nilai dan Karakter</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                Pengetahuan yang berkaitan dengan pemahaman tentang nilai-nilai moral, etika, budaya, dan kemanusiaan yang berperan penting dalam membentuk kepribadian, sikap, dan perilaku seseorang
+                            </p>
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <p class="text-xs font-semibold text-gray-900 mb-2">Contoh:</p>
+                                <p class="text-xs text-gray-600">Bahasa (Memahami cara menggunakan bahasa untuk membangun hubungan baik, menghindari konflik, serta menunjukkan empati dan kepedulian)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Detail Section 3: Dimensi Profil Lulusan -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Menentukan Dimensi Profil Lulusan</h2>
-                <p class="text-gray-700 leading-relaxed text-lg">
-                    Menentukan dimensi profil lulusan berdasarkan hasil identifikasi mata pelajaran. Menerapkan prinsip pembelajaran mendalam, yaitu <strong class="text-primary">bermakna</strong>, <strong class="text-primary">berkesadaran</strong>, dan <strong class="text-primary">menggembirakan</strong> untuk mencapai dimensi profil lulusan. Pilih dimensi yang relevan dengan tujuan pembelajaran dan karakteristik mata pelajaran yang diajarkan.
-                </p>
+            <!-- Mengaplikasi Section (2) -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Pengalaman Belajar</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Mengaplikasi</h2>
+                    <div class="w-10 h-10 bg-orange-400 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">2</span>
+                    </div>
+                </div>
+
+                <!-- Three Columns -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Pendalaman Pengetahuan -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Pendalaman Pengetahuan</h3>
+                        </div>
+                        <div class="p-6 min-h-[200px]">
+                            <p class="text-sm leading-relaxed">
+                                Memperluas atau mengembangkan pemahaman terhadap konsep dengan menghubungkannya ke situasi baru, pengalaman lain, atau bidang ilmu yang berbeda.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Karakteristik -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Karakteristik</h3>
+                        </div>
+                        <div class="p-6 min-h-[200px]">
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5 font-bold">•</span>
+                                    <span><strong>Menghubungkan</strong> konsep baru dengan pengetahuan sebelumnya.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5 font-bold">•</span>
+                                    <span><strong>Menerapkan</strong> pengetahuan ke dalam situasi nyata atau bidang lain.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5 font-bold">•</span>
+                                    <span><strong>Mengembangkan</strong> pemahaman dengan eksplorasi lebih lanjut.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5 font-bold">•</span>
+                                    <span><strong>Berpikir Kritis</strong> dan mencari solusi inovatif berdasarkan pengetahuan yang ada.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contoh -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Contoh</h3>
+                        </div>
+                        <div class="p-6 min-h-[200px]">
+                            <div class="space-y-4 text-sm">
+                                <div>
+                                    <p class="font-semibold text-gray-900 mb-1">Topik: Persamaan Linear</p>
+                                    <ul class="space-y-1 ml-4">
+                                        <li class="flex items-start gap-2">
+                                            <span class="text-primary mt-0.5">•</span>
+                                            <span><strong>Dasar:</strong> Peserta didik memahami bentuk umum persamaan linear dan cara menyelesaikannya.</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <span class="text-primary mt-0.5">•</span>
+                                            <span><strong>Pendalaman Pengetahuan:</strong> Peserta didik menerapkan persamaan linear dalam masalah keuangan, seperti menghitung keuntungan bisnis atau menentukan titik impas dalam penjualan produk.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Merefleksi Section (3) - Part 1 -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Pengalaman Belajar</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Merefleksi</h2>
+                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">3</span>
+                    </div>
+                </div>
+
+                <!-- Three Columns -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <!-- Regulasi Diri -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Regulasi Diri</h3>
+                        </div>
+                        <div class="p-6 min-h-[200px]">
+                            <p class="text-sm leading-relaxed">
+                                Individu mampu mengendalikan pikiran, emosi, dan perilaku dalam mencapai tujuan tertentu. Dalam konteks pendidikan, regulasi diri sangat penting bagi peserta didik untuk mengelola proses belajar mereka secara mandiri dan efektif. Merefleksikan pengetahuan artinya murid <strong>memperluas dan menerapkan ide atau solusi baru.</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Karakteristik -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Karakteristik</h3>
+                        </div>
+                        <div class="p-6 min-h-[200px]">
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Memotivasi diri sendiri untuk terus belajar bagaimana cara belajar</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Refleksi terhadap pencapaian tujuan pembelajaran (evaluasi diri)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Menerapkan strategi berpikir</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Memiliki kemampuan metakognisi (meregulasi diri dalam pembelajaran)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Meregulasi emosi dalam pembelajaran</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Contoh -->
+                    <div class="bg-white rounded-lg border-2 border-primary shadow-md">
+                        <div class="bg-primary text-white p-4 rounded-t-lg">
+                            <h3 class="font-bold text-lg">Contoh</h3>
+                        </div>
+                        <div class="p-6 min-h-[200px]">
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Menyampaikan motivasi belajar sesuai pengalaman yang diperoleh</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Penilaian diri sendiri terhadap pencapaian tujuan pembelajaran</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary mt-0.5">•</span>
+                                    <span>Murid berpikir kritis tentang dampak perubahan habitat terhadap makhluk hidup dan mengaitkannya dengan isu-isu global seperti perubahan iklim dan pelestarian lingkungan.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Merefleksi Section (3) - Part 2: Detailed Explanation -->
+            <div class="mb-12 bg-gray-50 rounded-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Pembelajaran Belajar Merefleksi</h3>
+                
+                <div class="space-y-6 text-gray-700 leading-relaxed">
+                    <p>
+                        Pengalaman belajar merefleksi dilalui dengan mengarahkan murid untuk melakukan evaluasi dan memberikan makna terhadap proses serta hasil dari pengalaman atau praktik yang telah mereka jalani.
+                    </p>
+                    
+                    <p>
+                        Pembelajaran belajar refleksi ini menekankan <strong>pentingnya kemampuan regulasi diri</strong>, yaitu keterampilan murid dalam mengatur proses belajarnya secara mandiri, mulai dari tahap perencanaan, pelaksanaan, pemantauan, hingga evaluasi strategi belajar yang digunakan.
+                    </p>
+                    
+                    <p>
+                        Melalui pengalaman belajar merefleksi, murid dapat memperluas pemahaman dan mengembangkan ide atau solusi baru yang dapat diterapkan dalam konteks lain, <strong>tidak hanya meninjau kembali</strong> apa yang telah mereka pelajari.
+                    </p>
+                    
+                    <p>
+                        Dalam pembelajaran belajar merefleksi, murid <strong>tidak hanya diminta untuk mengulang atau mengingat kembali</strong> materi yang telah dipelajari, tetapi diarahkan untuk <strong>mengonstruksi kembali pemahamannya</strong> secara kritis, menghubungkannya dengan konteks yang lebih luas, serta mengidentifikasi implikasi atau kemungkinan penerapan dalam situasi berbeda.
+                    </p>
+                    
+                    <p>
+                        Proses ini melibatkan keterampilan metakognitif, seperti menyadari cara berpikir mereka sendiri, mengevaluasi strategi yang digunakan saat belajar, serta menilai keberhasilan atau hambatan dalam pencapaian tujuan belajar.
+                    </p>
+                    
+                    <p>
+                        Dengan demikian, refleksi berfungsi sebagai <strong>jembatan antara pengalaman belajar dan transfer pengetahuan</strong>, memungkinkan murid untuk menggeneralisasi prinsip-prinsip inti, memformulasikan pertanyaan baru, serta mengembangkan alternatif ide atau solusi yang dapat diterapkan di luar konteks awal pembelajaran.
+                    </p>
+                    
+                    <p class="font-semibold text-gray-900 text-lg">
+                        Pendekatan ini memperkuat pembelajaran mendalam karena mendorong murid menjadi pembelajar aktif, reflektif, dan adaptif.
+                    </p>
+                </div>
             </div>
 
         </div>
@@ -307,6 +569,30 @@
         document.addEventListener('DOMContentLoaded', function() {
             const navbar = document.querySelector('nav');
             const heroHeight = document.querySelector('section').offsetHeight;
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            const userMenuIcon = document.getElementById('userMenuIcon');
+            
+            // User dropdown functionality
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenuDropdown.classList.toggle('hidden');
+                    if (userMenuIcon) {
+                        userMenuIcon.classList.toggle('rotate-180');
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                        if (userMenuIcon) {
+                            userMenuIcon.classList.remove('rotate-180');
+                        }
+                    }
+                });
+            }
             
             window.addEventListener('scroll', function() {
                 if (window.scrollY > heroHeight - 100) {
@@ -318,6 +604,8 @@
                     const brandTitle = navbar.querySelector('.flex.flex-col .text-lg');
                     const brandSubtitle = navbar.querySelector('.flex.flex-col .text-xs');
                     const backLink = navbar.querySelector('a[href="/"]');
+                    const userName = navbar.querySelector('#userMenuButton .text-sm.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-xs');
                     
                     if (brandTitle) {
                         brandTitle.classList.remove('text-white');
@@ -331,6 +619,14 @@
                         backLink.classList.remove('text-white', 'hover:text-primary-200');
                         backLink.classList.add('text-gray-700', 'hover:text-primary');
                     }
+                    if (userName) {
+                        userName.classList.remove('text-white');
+                        userName.classList.add('text-gray-900');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-white/80');
+                        userEmail.classList.add('text-gray-500');
+                    }
                 } else {
                     // At hero - dark navbar
                     navbar.classList.remove('bg-white/90', 'border-gray-200', 'shadow-lg');
@@ -340,6 +636,8 @@
                     const brandTitle = navbar.querySelector('.flex.flex-col .text-lg');
                     const brandSubtitle = navbar.querySelector('.flex.flex-col .text-xs');
                     const backLink = navbar.querySelector('a[href="/"]');
+                    const userName = navbar.querySelector('#userMenuButton .text-sm.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-xs');
                     
                     if (brandTitle) {
                         brandTitle.classList.remove('text-gray-900');
@@ -353,9 +651,23 @@
                         backLink.classList.remove('text-gray-700', 'hover:text-primary');
                         backLink.classList.add('text-white', 'hover:text-primary-200');
                     }
+                    if (userName) {
+                        userName.classList.remove('text-gray-900');
+                        userName.classList.add('text-white');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-gray-500');
+                        userEmail.classList.add('text-white/80');
+                    }
                 }
             });
         });
+        
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
     </script>
 </body>
 </html>

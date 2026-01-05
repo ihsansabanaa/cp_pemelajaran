@@ -26,7 +26,7 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <a href="/" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white hover:text-primary-200 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -34,15 +34,58 @@
                         <span>Beranda</span>
                     </a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
-                            Dashboard
-                        </a>
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                                <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-sm font-semibold text-white">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-white/80">{{ auth()->user()->email }}</div>
+                                </div>
+                                <svg id="userMenuIcon" class="w-4 h-4 text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200" style="z-index: 9999;">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</div>
+                                </div>
+                                <div class="p-2">
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST" id="logoutForm">
+                                        @csrf
+                                        <button type="button" onclick="confirmLogout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                            </svg>
+                                            Keluar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @else
                         <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
                             <span class="hidden md:inline">Login</span>
+                        </a>
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-primary bg-white border border-white rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-white transition-colors shadow-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span class="hidden md:inline">Daftar</span>
                         </a>
                     @endauth
                 </div>
@@ -53,9 +96,9 @@
     <!-- Header Section -->
     <section class="pt-28 pb-12 px-4 bg-gradient-to-br from-primary-600 to-primary-700">
         <div class="max-w-6xl mx-auto">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Prinsip Pembelajaran</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Penerapan Prinsip <span class="text-cyan-300">Pembelajaran Mendalam</span></h1>
             <p class="text-lg text-primary-50 leading-relaxed max-w-3xl">
-                Menerapkan prinsip pembelajaran berpusat pada peserta didik sesuai kurikulum merdeka. Implementasi pembelajaran mendalam mendorong partisipasi aktif murid.
+                Penerapan prinsip pembelajaran mendalam dapat terjadi secara terpisah ataupun simultan dan tidak harus berurutan.
             </p>
         </div>
     </section>
@@ -67,55 +110,157 @@
             <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
                 <!-- Introduction Text -->
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Pengantar Prinsip Pembelajaran</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Pembelajaran Mendalam</h2>
+                    <p class="text-gray-700 leading-relaxed text-lg mb-4">
+                        Pembelajaran mendalam adalah pendekatan yang mengutamakan pemahaman konseptual yang mendalam, bukan sekadar menghafal informasi. Dalam pembelajaran ini, peserta didik tidak hanya mempelajari fakta, tetapi juga memahami konsep secara menyeluruh, mengaitkan ide-ide, dan menerapkan pengetahuan dalam berbagai konteks.
+                    </p>
                     <p class="text-gray-700 leading-relaxed text-lg">
-                        Prinsip pembelajaran dalam Kurikulum Merdeka mengutamakan pendekatan berpusat pada peserta didik. Pembelajaran dirancang untuk mendorong partisipasi aktif, kolaborasi, dan pengembangan kompetensi secara menyeluruh melalui pengalaman belajar yang bermakna dan menggembirakan.
+                        Tiga pilar utama pembelajaran mendalam adalah <strong>Berkesadaran</strong>, <strong>Bermakna</strong>, dan <strong>Menggembirakan</strong>. Ketiga prinsip ini saling terkait dan dapat diterapkan secara bersamaan dalam proses pembelajaran.
                     </p>
                 </div>
                 <!-- SVG Illustration -->
                 <div class="flex justify-center md:justify-end">
                     <div class="w-full max-w-md">
-                        <img src="{{ asset('images/Teacher-rafiki.svg') }}" alt="Ilustrasi Pembelajaran" class="w-full h-auto">
+                        <img src="{{ asset('images/pembelajaran mendalam.svg') }}" alt="Ilustrasi Pembelajaran Mendalam" class="w-full h-auto">
                     </div>
                 </div>
             </div>
 
-            <!-- Key Principles -->
-            <div class="space-y-8">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">1. Implementasi Pembelajaran Mendalam (PM)</h3>
-                    <p class="text-gray-700 leading-relaxed">
-                        Implementasi PM mendorong partisipasi aktif murid dalam berbagai kegiatan pembelajaran. Guru berperan sebagai aktivator dan motivator yang membantu peserta didik mengeksplorasi, berkreasi, dan mengaitkan hubungan antar konsep. Beberapa karakteristik pendekatan PM dengan prinsip berkesadaran, bermakna, dan menggembirakan antara lain pembelajaran aktif, kolaboratif, pembelajaran terdiferensiasi. Dengan demikian, guru harus memahami karakteristik murid dengan berbagai strategi pembelajaran untuk menciptakan pembelajaran yang berkesadaran, bermakna, dan menggembirakan.
-                    </p>
+            <!-- Three Principles Cards -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <!-- Berkesadaran Card -->
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-primary">
+                    <div class="w-16 h-16 bg-primary-50 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 text-center mb-4">Berkesadaran</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Kenyamanan peserta didik dalam belajar</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Fokus, konsentrasi, dan perhatian</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Kesadaran terhadap proses berpikir</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Keterbukaan terhadap perspektif baru</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Keingintahuan terhadap pengetahuan dan pengalaman baru</span>
+                        </li>
+                    </ul>
                 </div>
 
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">2. Pembelajaran Berbasis Refleksi</h3>
-                    <p class="text-gray-700 leading-relaxed">
-                        Pembelajaran Mendalam mendorong murid untuk bertanggung jawab atas pembelajaran mereka sendiri dan merefleksikan kemajuan mereka sehingga mereka mampu melakukan asesmen diri, merefleksi capaian pembelajaran mereka sendiri dan menetapkan tujuan pribadi. Hal ini membantu peserta didik mengembangkan keterampilan metakognitif dan mendorong mereka untuk lebih proaktif dalam pembelajaran mereka. Asesmen dalam PM relevan dengan pencapaian profil lulusan yang mendukung pengembangan kompetensi peserta didik secara menyeluruh.
-                    </p>
+                <!-- Bermakna Card -->
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-secondary">
+                    <div class="w-16 h-16 bg-secondary-50 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 text-center mb-4">Bermakna</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Kontekstual dan/atau relevan dengan kehidupan nyata</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Keterkaitan dengan pengalaman sebelumnya</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Kebermanfaatan pengalaman belajar untuk diterapkan dalam konteks baru</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Keterkaitan dengan bidang ilmu lain</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Pembelajar sepanjang hayat</span>
+                        </li>
+                    </ul>
                 </div>
 
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">3. Pembelajaran Terdiferensiasi</h3>
-                    <p class="text-gray-700 leading-relaxed">
-                        Pembelajaran terdiferensiasi mengakui bahwa setiap peserta didik memiliki kebutuhan, minat, dan gaya belajar yang berbeda. Guru merancang strategi pembelajaran yang fleksibel untuk mengakomodasi keberagaman ini, memastikan setiap murid mendapatkan kesempatan yang setara untuk berkembang sesuai dengan potensinya masing-masing.
-                    </p>
+                <!-- Menggembirakan Card -->
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-accent">
+                    <div class="w-16 h-16 bg-accent-50 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 text-center mb-4">Menggembirakan</h3>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Lingkungan pembelajaran yang interaktif</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Aktivitas pembelajaran yang menarik</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Menginspirasi</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Tantangan yang memotivasi</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Tercapainya keberhasilan belajar (<em>AHA moment</em>)</span>
+                        </li>
+                    </ul>
                 </div>
+            </div>
 
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">4. Pembelajaran Kolaboratif</h3>
-                    <p class="text-gray-700 leading-relaxed">
-                        Pembelajaran kolaboratif mendorong peserta didik untuk bekerja sama dalam kelompok, berbagi ide, dan memecahkan masalah bersama. Pendekatan ini mengembangkan keterampilan sosial, komunikasi, dan kerja tim yang penting untuk kehidupan di abad 21.
-                    </p>
-                </div>
-
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">5. Pembelajaran Kontekstual</h3>
-                    <p class="text-gray-700 leading-relaxed">
-                        Pembelajaran kontekstual mengaitkan materi pelajaran dengan situasi dunia nyata dan pengalaman peserta didik. Hal ini membuat pembelajaran lebih bermakna dan relevan, sehingga meningkatkan motivasi dan pemahaman murid terhadap konsep yang dipelajari.
-                    </p>
-                </div>
+            <!-- Bottom Note -->
+            <div class="bg-gradient-to-br from-primary-50 to-cyan-50 rounded-xl p-6 border-l-4 border-primary">
+                <p class="text-gray-800 text-center italic text-lg leading-relaxed">
+                    <strong>Penerapan prinsip pembelajaran mendalam dapat terjadi secara terpisah ataupun simultan dan tidak harus berurutan</strong>
+                </p>
             </div>
         </div>
     </section>
@@ -209,10 +354,34 @@
     </footer>
 
     <script>
-        // Navbar scroll effect
+        // Navbar scroll effect and user dropdown
         document.addEventListener('DOMContentLoaded', function() {
             const navbar = document.querySelector('nav');
             const heroHeight = document.querySelector('section').offsetHeight;
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            const userMenuIcon = document.getElementById('userMenuIcon');
+            
+            // User dropdown functionality
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenuDropdown.classList.toggle('hidden');
+                    if (userMenuIcon) {
+                        userMenuIcon.classList.toggle('rotate-180');
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                        if (userMenuIcon) {
+                            userMenuIcon.classList.remove('rotate-180');
+                        }
+                    }
+                });
+            }
             
             window.addEventListener('scroll', function() {
                 if (window.scrollY > heroHeight - 100) {
@@ -224,6 +393,8 @@
                     const brandTitle = navbar.querySelector('.flex.flex-col .text-lg');
                     const brandSubtitle = navbar.querySelector('.flex.flex-col .text-xs');
                     const backLink = navbar.querySelector('a[href="/"]');
+                    const userName = navbar.querySelector('#userMenuButton .text-sm.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-xs');
                     
                     if (brandTitle) {
                         brandTitle.classList.remove('text-white');
@@ -237,6 +408,14 @@
                         backLink.classList.remove('text-white', 'hover:text-primary-200');
                         backLink.classList.add('text-gray-700', 'hover:text-primary');
                     }
+                    if (userName) {
+                        userName.classList.remove('text-white');
+                        userName.classList.add('text-gray-900');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-white/80');
+                        userEmail.classList.add('text-gray-500');
+                    }
                 } else {
                     // At hero - dark navbar
                     navbar.classList.remove('bg-white/90', 'border-gray-200', 'shadow-lg');
@@ -246,6 +425,8 @@
                     const brandTitle = navbar.querySelector('.flex.flex-col .text-lg');
                     const brandSubtitle = navbar.querySelector('.flex.flex-col .text-xs');
                     const backLink = navbar.querySelector('a[href="/"]');
+                    const userName = navbar.querySelector('#userMenuButton .text-sm.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-xs');
                     
                     if (brandTitle) {
                         brandTitle.classList.remove('text-gray-900');
@@ -259,9 +440,23 @@
                         backLink.classList.remove('text-gray-700', 'hover:text-primary');
                         backLink.classList.add('text-white', 'hover:text-primary-200');
                     }
+                    if (userName) {
+                        userName.classList.remove('text-gray-900');
+                        userName.classList.add('text-white');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-gray-500');
+                        userEmail.classList.add('text-white/80');
+                    }
                 }
             });
         });
+        
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
     </script>
 </body>
 </html>

@@ -91,19 +91,62 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-white/10 backdrop-blur-sm border border-white/30 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-                        </svg>
-                        <span class="hidden md:inline">Login</span>
-                    </a>
-                    <a href="{{ route('register') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                        </svg>
-                        <span class="hidden md:inline">Daftar</span>
-                    </a>
+                <div class="flex items-center gap-3">
+                    @auth
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                                <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-sm font-semibold text-white">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-white/80">{{ auth()->user()->email }}</div>
+                                </div>
+                                <svg id="userMenuIcon" class="w-4 h-4 text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200" style="z-index: 9999;">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</div>
+                                </div>
+                                <div class="p-2">
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST" id="logoutForm">
+                                        @csrf
+                                        <button type="button" onclick="confirmLogout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                            </svg>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            <span>Login</span>
+                        </a>
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-white transition-colors shadow-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Daftar</span>
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -375,32 +418,42 @@
 
     <!-- CTA Section -->
     <section class="py-24 px-4 bg-white">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 mb-4">
-                <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left: Illustration -->
+                <div class="hidden lg:flex items-center justify-center">
+                    <img src="{{ asset('images/Teacher-rafiki.svg') }}" alt="Join Illustration" class="w-full h-auto max-w-lg animate-fade-in-up">
                 </div>
-                <span class="text-sm font-semibold text-accent uppercase tracking-wider">Bergabung Sekarang</span>
-            </div>
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Siap Memulai Perjalanan Anda?</h2>
-            <p class="text-lg md:text-xl mb-10 text-gray-600 max-w-2xl mx-auto">
-                Bergabunglah dengan sistem manajemen capaian pembelajaran modern untuk SMK dan tingkatkan kualitas pendidikan kejuruan
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg font-semibold text-white bg-primary rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors shadow-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    Daftar Sekarang
-                </a>
-                <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-                    </svg>
-                    Sudah Punya Akun? Login
-                </a>
+
+                <!-- Right: Content -->
+                <div class="space-y-6">
+                    <div class="inline-flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-semibold text-accent uppercase tracking-wider">Bergabung Sekarang</span>
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">Siap Memulai Perjalanan Anda?</h2>
+                    <p class="text-lg md:text-xl text-gray-600 leading-relaxed">
+                        Bergabunglah dengan sistem manajemen capaian pembelajaran modern untuk SMK dan tingkatkan kualitas pendidikan kejuruan
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg font-semibold text-white bg-primary rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Daftar Sekarang
+                        </a>
+                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            Sudah Punya Akun? Login
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -528,6 +581,31 @@
                         registerBtn.classList.remove('text-gray-900', 'bg-white', 'hover:bg-gray-50', 'focus:ring-white');
                         registerBtn.classList.add('text-white', 'bg-primary', 'hover:bg-primary-600', 'focus:ring-primary');
                     }
+
+                    // Change user dropdown text colors (if authenticated)
+                    @auth
+                    const userName = navbar.querySelector('#userMenuButton .text-white.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-white\\/80');
+                    const userIcon = navbar.querySelector('#userMenuIcon');
+                    const userMenuBtn = navbar.querySelector('#userMenuButton');
+                    
+                    if (userName) {
+                        userName.classList.remove('text-white');
+                        userName.classList.add('text-gray-900');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-white/80');
+                        userEmail.classList.add('text-gray-500');
+                    }
+                    if (userIcon) {
+                        userIcon.classList.remove('text-white');
+                        userIcon.classList.add('text-gray-500');
+                    }
+                    if (userMenuBtn) {
+                        userMenuBtn.classList.remove('hover:bg-white/20');
+                        userMenuBtn.classList.add('hover:bg-gray-100');
+                    }
+                    @endauth
                 } else {
                     // In hero section - dark navbar
                     navbar.classList.remove('bg-white/60', 'border-gray-200/50', 'shadow-lg');
@@ -558,9 +636,62 @@
                         registerBtn.classList.remove('hover:bg-primary-700', 'border-primary');
                         registerBtn.classList.add('hover:bg-primary-600');
                     }
+
+                    // Change user dropdown text colors back (if authenticated)
+                    @auth
+                    const userName = navbar.querySelector('#userMenuButton .text-gray-900.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-gray-500');
+                    const userIcon = navbar.querySelector('#userMenuIcon');
+                    const userMenuBtn = navbar.querySelector('#userMenuButton');
+                    
+                    if (userName) {
+                        userName.classList.remove('text-gray-900');
+                        userName.classList.add('text-white');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-gray-500');
+                        userEmail.classList.add('text-white/80');
+                    }
+                    if (userIcon) {
+                        userIcon.classList.remove('text-gray-500');
+                        userIcon.classList.add('text-white');
+                    }
+                    if (userMenuBtn) {
+                        userMenuBtn.classList.remove('hover:bg-gray-100');
+                        userMenuBtn.classList.add('hover:bg-white/20');
+                    }
+                    @endauth
                 }
             });
         });
+
+        // User Menu Dropdown (only if user is authenticated)
+        @auth
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenuDropdown = document.getElementById('userMenuDropdown');
+        const userMenuIcon = document.getElementById('userMenuIcon');
+
+        if (userMenuButton && userMenuDropdown) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenuDropdown.classList.toggle('hidden');
+                userMenuIcon.classList.toggle('rotate-180');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                    userMenuIcon.classList.remove('rotate-180');
+                }
+            });
+        }
+
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
+        @endauth
     </script>
 </body>
 </html>

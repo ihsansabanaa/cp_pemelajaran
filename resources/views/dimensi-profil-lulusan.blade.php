@@ -26,7 +26,7 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <a href="/" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white hover:text-primary-200 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -34,15 +34,58 @@
                         <span>Beranda</span>
                     </a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
-                            Dashboard
-                        </a>
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                                <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-sm font-semibold text-white">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-white/80">{{ auth()->user()->email }}</div>
+                                </div>
+                                <svg id="userMenuIcon" class="w-4 h-4 text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200" style="z-index: 9999;">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</div>
+                                </div>
+                                <div class="p-2">
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST" id="logoutForm">
+                                        @csrf
+                                        <button type="button" onclick="confirmLogout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                            </svg>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @else
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            <span class="hidden md:inline">Login</span>
+                            <span>Login</span>
+                        </a>
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-white transition-colors shadow-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Daftar</span>
                         </a>
                     @endauth
                 </div>
@@ -74,34 +117,9 @@
             </div>
 
             <!-- Diagram Section -->
-            <div class="mb-12 flex justify-center">
-                <div class="relative w-full max-w-lg">
-                    <svg viewBox="0 0 400 400" class="w-full h-auto">
-                        <!-- Outer Circle Labels -->
-                        <g class="text-xs" fill="#666">
-                            <text x="200" y="30" text-anchor="middle" class="font-semibold text-primary-600">Keimanan dan Ketakwaan</text>
-                            <text x="340" y="110" text-anchor="middle" class="font-semibold text-primary-600">Kewargaan</text>
-                            <text x="360" y="240" text-anchor="middle" class="font-semibold text-primary-600">Kreativitas</text>
-                            <text x="270" y="350" text-anchor="middle" class="font-semibold text-primary-600">Kemandirian</text>
-                            <text x="130" y="350" text-anchor="middle" class="font-semibold text-primary-600">Komunikasi</text>
-                            <text x="40" y="240" text-anchor="middle" class="font-semibold text-primary-600">Kesehatan</text>
-                            <text x="60" y="110" text-anchor="middle" class="font-semibold text-primary-600">Kolaborasi</text>
-                            <text x="200" y="70" text-anchor="middle" class="font-semibold text-primary-600">Penalaran Kritis</text>
-                        </g>
-                        
-                        <!-- Outer Ring -->
-                        <circle cx="200" cy="200" r="160" fill="none" stroke="#e0f2fe" stroke-width="40" opacity="0.5"/>
-                        
-                        <!-- Middle Ring -->
-                        <circle cx="200" cy="200" r="110" fill="none" stroke="#bae6fd" stroke-width="30" opacity="0.6"/>
-                        
-                        <!-- Inner Circle -->
-                        <circle cx="200" cy="200" r="75" fill="#0ea5e9" opacity="0.9"/>
-                        
-                        <!-- Center Text -->
-                        <text x="200" y="195" text-anchor="middle" class="text-white font-bold text-sm fill-white">PEMBELAJARAN</text>
-                        <text x="200" y="215" text-anchor="middle" class="text-white font-bold text-sm fill-white">MENDALAM</text>
-                    </svg>
+            <div class="mb-16 flex justify-center">
+                <div class="relative w-full max-w-4xl">
+                    <img src="{{ asset('images/Dimensi profil lulusan.svg') }}" alt="Dimensi Profil Lulusan" class="mx-auto my-8 w-64 h-auto">
                 </div>
             </div>
 
@@ -285,6 +303,31 @@
                         backLink.classList.remove('text-white', 'hover:text-primary-200');
                         backLink.classList.add('text-gray-700', 'hover:text-primary');
                     }
+
+                    // Change user dropdown colors (if authenticated)
+                    @auth
+                    const userName = navbar.querySelector('#userMenuButton .text-white.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-white\\/80');
+                    const userIcon = navbar.querySelector('#userMenuIcon');
+                    const userMenuBtn = navbar.querySelector('#userMenuButton');
+                    
+                    if (userName) {
+                        userName.classList.remove('text-white');
+                        userName.classList.add('text-gray-900');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-white/80');
+                        userEmail.classList.add('text-gray-500');
+                    }
+                    if (userIcon) {
+                        userIcon.classList.remove('text-white');
+                        userIcon.classList.add('text-gray-500');
+                    }
+                    if (userMenuBtn) {
+                        userMenuBtn.classList.remove('hover:bg-white/20');
+                        userMenuBtn.classList.add('hover:bg-gray-100');
+                    }
+                    @endauth
                 } else {
                     // At hero - dark navbar
                     navbar.classList.remove('bg-white/90', 'border-gray-200', 'shadow-lg');
@@ -307,9 +350,62 @@
                         backLink.classList.remove('text-gray-700', 'hover:text-primary');
                         backLink.classList.add('text-white', 'hover:text-primary-200');
                     }
+
+                    // Change user dropdown colors back (if authenticated)
+                    @auth
+                    const userName = navbar.querySelector('#userMenuButton .text-gray-900.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-gray-500');
+                    const userIcon = navbar.querySelector('#userMenuIcon');
+                    const userMenuBtn = navbar.querySelector('#userMenuButton');
+                    
+                    if (userName) {
+                        userName.classList.remove('text-gray-900');
+                        userName.classList.add('text-white');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-gray-500');
+                        userEmail.classList.add('text-white/80');
+                    }
+                    if (userIcon) {
+                        userIcon.classList.remove('text-gray-500');
+                        userIcon.classList.add('text-white');
+                    }
+                    if (userMenuBtn) {
+                        userMenuBtn.classList.remove('hover:bg-gray-100');
+                        userMenuBtn.classList.add('hover:bg-white/20');
+                    }
+                    @endauth
                 }
             });
         });
+
+        // User Menu Dropdown (only if user is authenticated)
+        @auth
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenuDropdown = document.getElementById('userMenuDropdown');
+        const userMenuIcon = document.getElementById('userMenuIcon');
+
+        if (userMenuButton && userMenuDropdown) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenuDropdown.classList.toggle('hidden');
+                userMenuIcon.classList.toggle('rotate-180');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                    userMenuIcon.classList.remove('rotate-180');
+                }
+            });
+        }
+
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
+        @endauth
     </script>
 </body>
 </html>

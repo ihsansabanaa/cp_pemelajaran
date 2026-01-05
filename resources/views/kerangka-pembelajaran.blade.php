@@ -26,7 +26,7 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <a href="/" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white hover:text-primary-200 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -34,15 +34,58 @@
                         <span>Beranda</span>
                     </a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
-                            Dashboard
-                        </a>
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                                <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-sm font-semibold text-white">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-white/80">{{ auth()->user()->email }}</div>
+                                </div>
+                                <svg id="userMenuIcon" class="w-4 h-4 text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200" style="z-index: 9999;">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <div class="text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</div>
+                                </div>
+                                <div class="p-2">
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST" id="logoutForm">
+                                        @csrf
+                                        <button type="button" onclick="confirmLogout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                            </svg>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @else
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary transition-colors shadow-lg">
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            <span class="hidden md:inline">Login</span>
+                            <span>Login</span>
+                        </a>
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-white transition-colors shadow-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Daftar</span>
                         </a>
                     @endauth
                 </div>
@@ -63,274 +106,308 @@
     <!-- Content Section -->
     <section class="py-12 px-4">
         <div class="max-w-6xl mx-auto">
-            <!-- Introduction -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Pengantar Kerangka Pembelajaran</h2>
-                <p class="text-gray-700 leading-relaxed text-lg mb-6">
-                    Kerangka pembelajaran merupakan struktur sistematis dalam merancang dan melaksanakan proses pembelajaran yang efektif. Kerangka ini mencakup berbagai komponen penting mulai dari menentukan tujuan pembelajaran hingga merancang pengalaman belajar yang bermakna.
-                </p>
-                
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Desain Pembelajaran</h3>
-                    <ul class="space-y-2 text-gray-700 leading-relaxed">
-                        <li>• Menentukan tujuan pembelajaran</li>
-                        <li>• Menentukan kerangka pembelajaran (praktis pedagogis, kemitraan pembelajaran, lingkungan pembelajaran, pemanfaatan digital)</li>
-                    </ul>
+            <!-- Overview Cards Grid -->
+            <div class="grid md:grid-cols-2 gap-6 mb-12">
+                <!-- Card 1: Praktik Pedagogis -->
+                <div class="bg-white rounded-xl p-6 shadow-md border-l-4 border-primary">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                        <h3 class="text-xl font-bold text-gray-900">Praktik Pedagogis</h3>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        Strategi mengajar yang dipilih guru untuk mencapai tujuan belajar dalam mencapai dimensi profil lulusan. Untuk mewujudkan pembelajaran mendalam guru berfokus pada pengalaman belajar peserta didik yang autentik, mengutamakan praktik nyata, mendorong keterampilan berpikir tingkat tinggi dan kolaborasi.
+                    </p>
+                </div>
+
+                <!-- Card 2: Kemitraan Pembelajaran -->
+                <div class="bg-white rounded-xl p-6 shadow-md border-l-4 border-secondary">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                        <h3 class="text-xl font-bold text-gray-900">Kemitraan Pembelajaran</h3>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        Kemitraan pembelajaran membentuk hubungan yang dinamis antara guru, peserta didik, orang tua, komunitas, dan mitra profesional. Pendekatan ini memindahkan kontrol pembelajaran dari guru saja menjadi kolaborasi bersama.
+                    </p>
+                </div>
+
+                <!-- Card 3: Lingkungan Pembelajaran -->
+                <div class="bg-white rounded-xl p-6 shadow-md border-l-4 border-cyan-500">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="w-10 h-10 bg-cyan-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                        <h3 class="text-xl font-bold text-gray-900">Lingkungan Pembelajaran</h3>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        Lingkungan pembelajaran menekankan integrasi antara ruang fisik, ruang virtual, dan budaya belajar untuk mendukung pembelajaran mendalam. Ruang fisik dan virtual dirancang fleksibel sebagai tempat yang mendorong kolaborasi, refleksi, eksplorasi, dan berbagi ide, sehingga dapat mengakomodasi berbagai gaya belajar peserta didik dengan optimal.
+                    </p>
+                </div>
+
+                <!-- Card 4: Pemanfaatan Digital -->
+                <div class="bg-white rounded-xl p-6 shadow-md border-l-4 border-accent">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">4</div>
+                        <h3 class="text-xl font-bold text-gray-900">Pemanfaatan Digital</h3>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        Pemanfaatan teknologi digital juga memegang peran penting sebagai katalisator untuk menciptakan pembelajaran yang lebih interaktif, kolaboratif, dan kontekstual. Tersedianya beragam sumber belajar menjadi peluang menciptakan pengetahuan bermakna pada peserta didik.
+                    </p>
                 </div>
             </div>
 
-            <!-- Menentukan Tujuan Pembelajaran -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Menentukan Tujuan Pembelajaran</h2>
-                
-                <p class="text-gray-700 leading-relaxed mb-6">
-                    Tujuan pembelajaran diturunkan dari Capaian Pembelajaran. Penulisan tujuan pembelajaran sebaiknya memuat 2 komponen utama, yaitu:
-                </p>
-                
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">1. Kompetensi</h3>
-                        <p class="text-gray-700 leading-relaxed mb-3">
-                            Kemampuan murid sebagai hasil dari proses pembelajaran. Tujuan disusun dengan menggunakan kata kerja operasional yang relevan.
-                        </p>
-                        <p class="text-gray-700 leading-relaxed font-semibold mb-2">
-                            Pertanyaan panduan yang dapat digunakan guru:
-                        </p>
-                        <ul class="space-y-2 ml-6 text-gray-700">
-                            <li>• Secara konkret, kemampuan apa yang perlu murid tunjukkan?</li>
-                            <li>• Tahap berpikir apa yang perlu murid tunjukkan?</li>
-                        </ul>
+            <!-- Praktik Pedagogis Detail Section -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Kerangka Pembelajaran</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Praktik Pedagogis</h2>
+                </div>
+
+                <div class="bg-gradient-to-br from-primary-50 to-white rounded-xl p-8 border border-primary-100 mb-8">
+                    <p class="text-gray-700 leading-relaxed text-lg mb-6">
+                        Pembelajaran Mendalam dapat dilaksanakan menggunakan berbagai praktik pedagogis dengan menerapkan tiga prinsip yaitu <strong>berkesadaran, bermakna, menggembirakan</strong>, contohnya:
+                    </p>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- List 1 -->
+                        <div class="bg-white rounded-lg p-6 shadow-sm">
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Pembelajaran Berbasis Inkuiri</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Pembelajaran Berbasis Proyek</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Pembelajaran Berbasis Masalah</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Pembelajaran Kolaboratif</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- List 2 -->
+                        <div class="bg-white rounded-lg p-6 shadow-sm">
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Pembelajaran STEM (<em>Science, Technology, Engineering, Mathematic</em>)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Pembelajaran Berdiferensiasi</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">Dan sebagainya</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">2. Konten</h3>
+
+                    <div class="mt-6 bg-cyan-50 rounded-lg p-4 border-l-4 border-cyan-500">
                         <p class="text-gray-700 leading-relaxed">
-                            Lingkup materi berupa pengetahuan esensial dan pengetahuan aplikatif yang perlu dipahami pada akhir satu unit pembelajaran.
+                            <strong>Contoh lainnya:</strong> Diskusi, peta konsep, <em>advance organiser</em>, kerja kelompok, dan sebagainya
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- The SOLO Taxonomy -->
-            <div class="bg-white rounded-2xl shadow-md p-8 mb-12">
-            <!-- The SOLO Taxonomy -->
-            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
-                <div class="mb-8 pb-6 border-b border-gray-200">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-1">The SOLO Taxonomy</h2>
-                    <p class="text-sm text-gray-600 italic">(Structure of Observed Learning Outcomes)</p>
+            <!-- Kemitraan Pembelajaran Detail Section -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Kerangka Pembelajaran</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Kemitraan Pembelajaran</h2>
                 </div>
-                
-                <div class="bg-primary-50/50 rounded-xl p-8 border border-primary-100">
-                    <!-- Taxonomy Levels - Simplified -->
-                    <div class="grid grid-cols-5 gap-4">
-                        <!-- Prestructural -->
-                        <div class="text-center">
-                            <div class="bg-white rounded-lg p-4 mb-3 border border-gray-200 shadow-sm">
-                                <div class="h-32 flex items-center justify-center">
-                                    <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
-                                </div>
-                            </div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Prestructural</h4>
-                            <p class="text-xs text-gray-600">Belum Memahami</p>
-                        </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Left Side: Description -->
+                    <div class="bg-gradient-to-br from-secondary-50 to-white rounded-xl p-8 border border-secondary-100">
+                        <p class="text-gray-700 leading-relaxed text-lg mb-6">
+                            Kemitraan pembelajaran membentuk hubungan yang kolaboratif untuk memberikan <strong>pengalaman belajar, kebaruan informasi/ serta umpan balik</strong> kepada peserta didik melalui pengetahuan yang kontekstual dan nyata.
+                        </p>
+                    </div>
+
+                    <!-- Right Side: Categories -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Contoh Kemitraan:</h3>
                         
-                        <!-- Unistructural -->
-                        <div class="text-center">
-                            <div class="bg-white rounded-lg p-4 mb-3 border border-gray-200 shadow-sm">
-                                <div class="h-32 flex items-end justify-center">
-                                    <div class="w-12 h-20 bg-primary-400 rounded"></div>
+                        <!-- Lingkungan Sekolah -->
+                        <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-1">Lingkungan Sekolah:</h4>
+                                    <p class="text-sm text-gray-600">Kepala sekolah, pengawas sekolah, guru, dan peserta didik, dan lainnya</p>
                                 </div>
                             </div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Unistructural</h4>
-                            <p class="text-xs text-gray-600">Satu aspek</p>
                         </div>
-                        
-                        <!-- Multistructural -->
-                        <div class="text-center">
-                            <div class="bg-white rounded-lg p-4 mb-3 border border-gray-200 shadow-sm">
-                                <div class="h-32 flex items-end justify-center gap-1">
-                                    <div class="w-3 h-20 bg-primary-500 rounded"></div>
-                                    <div class="w-3 h-20 bg-primary-500 rounded"></div>
-                                    <div class="w-3 h-20 bg-primary-500 rounded"></div>
+
+                        <!-- Lingkungan Luar Sekolah -->
+                        <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-secondary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-1">Lingkungan Luar Sekolah:</h4>
+                                    <p class="text-sm text-gray-600">MGMP, Mitra Profesional, Dunia Usaha, Dunia Industri, dan Dunia Kerja, Institusi/ lembaga Pendidikan, Media, dan lainnya</p>
                                 </div>
                             </div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Multistructural</h4>
-                            <p class="text-xs text-gray-600">Beberapa aspek</p>
                         </div>
-                        
-                        <!-- Relational -->
-                        <div class="text-center">
-                            <div class="bg-white rounded-lg p-4 mb-3 border border-gray-200 shadow-sm">
-                                <div class="h-32 flex flex-col items-center justify-end">
-                                    <div class="flex gap-1">
-                                        <div class="w-3 h-16 bg-primary-600 rounded"></div>
-                                        <div class="w-3 h-16 bg-primary-600 rounded"></div>
-                                        <div class="w-3 h-16 bg-primary-600 rounded"></div>
-                                    </div>
-                                    <div class="w-12 h-1 bg-primary-600 mt-1"></div>
+
+                        <!-- Masyarakat -->
+                        <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-cyan-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-1">Masyarakat:</h4>
+                                    <p class="text-sm text-gray-600">Orang tua, Komunitas, Tokoh Masyarakat, Organisasi Keagamaan dan/atau Budaya, dan lainnya</p>
                                 </div>
                             </div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Relational</h4>
-                            <p class="text-xs text-gray-600">Terintegrasi</p>
-                        </div>
-                        
-                        <!-- Extended Abstract -->
-                        <div class="text-center">
-                            <div class="bg-white rounded-lg p-4 mb-3 border border-gray-200 shadow-sm">
-                                <div class="h-32 flex flex-col items-center justify-end relative">
-                                    <div class="flex gap-1">
-                                        <div class="w-3 h-16 bg-primary-700 rounded"></div>
-                                        <div class="w-3 h-16 bg-primary-700 rounded"></div>
-                                        <div class="w-3 h-16 bg-primary-700 rounded"></div>
-                                    </div>
-                                    <div class="w-12 h-1 bg-primary-700 mt-1"></div>
-                                    <div class="absolute -top-1 right-2 w-8 h-8 border-2 border-primary-700 rounded-full"></div>
-                                </div>
-                            </div>
-                            <h4 class="font-bold text-gray-900 text-sm mb-1">Extended Abstract</h4>
-                            <p class="text-xs text-gray-600">Generalisasi baru</p>
                         </div>
                     </div>
-                    
-                    <div class="text-xs text-gray-500 text-center mt-6">
-                        Sumber: Diadaptasi dari https://www.johnbiggs.com.au/academic/solo_taxonomy
-                    </div>
-                </div>
-            </div>ata Kerja Operasional Table -->
-            <div class="bg-white rounded-2xl shadow-md p-8 mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Kata Kerja Operasional untuk Taksonomi SOLO</h2>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border border-gray-300 px-6 py-4 text-left font-bold text-gray-900">Tingkatan</th>
-                                <th class="border border-gray-300 px-6 py-4 text-left font-bold text-gray-900">Kata kerja</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-300 px-6 py-4 font-semibold text-gray-900">Uni-struktural</td>
-                                <td class="border border-gray-300 px-6 py-4 text-gray-700">
-                                    Menghafal, mengidentifikasi, mengenali, menghitung, mendefinisikan, menggambar, menemukan, memberi label, mencocokkan, menyebutkan, mengutip, mengingat, membacakan, mengurutkan, memberi tahu, menulis, meniru
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-300 px-6 py-4 font-semibold text-gray-900">Multi-struktural</td>
-                                <td class="border border-gray-300 px-6 py-4 text-gray-700">
-                                    Klasifikasikan, jelaskan, daftar, laporkan, diskusikan, ilustrasikan, pilih, ceritakan, hitung, urutkan, buat garis besar, pisahkan
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-300 px-6 py-4 font-semibold text-gray-900">Relasional</td>
-                                <td class="border border-gray-300 px-6 py-4 text-gray-700">
-                                    Menerapkan, memadukan, menganalisis, menjelaskan, memprediksi, menyimpulkan, meringkas (ringkasan), meninjau, mendebat, mentransfer, membuat rencana, mencirikan, membandingkan, mengontraskan, membedakan, mengatur, memperdebatkan, membuat kasus, menyusun, meninjau dan menulis ulang, memeriksa, menerjemahkan, memparafrasekan, memecahkan masalah
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-300 px-6 py-4 font-semibold text-gray-900">Abstrak meluas</td>
-                                <td class="border border-gray-300 px-6 py-4 text-gray-700">
-                                    Berteori, berhipotesis, menggeneralisasi, merefleksikan, menghasilkan, menciptakan, menyusun, menemukan, mengawali, membuktikan dengan prinsip dasar, membuat kasus orisinal, memecahkan dengan prinsip dasar
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="mt-4 text-sm text-gray-600 italic">
-                    Source: Biggs, J & Tang, C (2007). Teaching for Quality Learning at University (3rd Edition). The Society for Research into Higher Education & Open University Press.
                 </div>
             </div>
 
-            <!-- PM dalam Taksonomi Table -->
-            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
-                <h2 class="text-3xl font-bold mb-8 pb-6 border-b border-gray-200">
-                    <span class="text-gray-900">PM dalam Taksonomi Pembelajaran Ranah</span>
-                    <span class="text-primary-600"> Kognitif</span>
-                </h2>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse">
-                        <thead>
-                            <tr class="bg-primary-500 text-white">
-                                <th class="border border-primary-400 px-5 py-3 text-left font-semibold">Taksonomi Bloom<br/>(Anderson & Krathwohl, 2001)</th>
-                                <th class="border border-primary-400 px-5 py-3 text-left font-semibold">Taksonomi SOLO<br/>(Biggs & Collis, 1982)</th>
-                                <th class="border border-primary-400 px-5 py-3 text-left font-semibold">Pengalaman Belajar PM</th>
-                                <th class="border border-primary-400 px-5 py-3 text-left font-semibold">Deskripsi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-200 px-5 py-4 align-top">
-                                    <div>• Mencipta</div>
-                                    <div>• Mengevaluasi</div>
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Berpikir Abstrak yang Mendalam
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top font-semibold text-gray-900">
-                                    Merefleksi
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Memperluas dan menerapkan ide
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-200 px-5 py-4 align-top">
-                                    <div>• Menganalisis</div>
-                                    <div>• Menerapkan</div>
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Relasional
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top font-semibold text-gray-900">
-                                    Mengaplikasi
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Menghubungkan ide-ide
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Memahami
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Multistruktural
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top font-semibold text-gray-900 rowspan-2">
-                                    Memahami
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Memiliki banyak ide
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Mengingat
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Unistruktural
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Mengingat kembali
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    -
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Prastruktural
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    -
-                                </td>
-                                <td class="border border-gray-200 px-5 py-4 align-top text-gray-700">
-                                    Belum Memahami
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Lingkungan Pembelajaran Detail Section -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Kerangka Pembelajaran</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Lingkungan Pembelajaran</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Main Description -->
+                    <div class="bg-gradient-to-br from-cyan-50 to-white rounded-xl p-8 border border-cyan-100">
+                        <div class="flex items-start gap-3 mb-6">
+                            <div class="w-10 h-10 bg-cyan-500 text-white rounded-lg flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                            <p class="text-gray-700 leading-relaxed text-lg">
+                                Lingkungan pembelajaran menekankan <strong>integrasi antara budaya belajar, ruang fisik, dan ruang virtual untuk mendukung PM</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Two Points Section -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Point 2 -->
+                        <div class="bg-white rounded-xl p-6 shadow-md border-t-4 border-cyan-500">
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="w-8 h-8 bg-cyan-500 text-white rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-sm">2</div>
+                                <h3 class="text-lg font-bold text-gray-900">Lingkungan pembelajaran yang mendukung</h3>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-cyan-500 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <p class="text-gray-700 text-sm"><strong>budaya belajar</strong> yang dikembangkan agar tercipta iklim belajar yang aman, nyaman, dan saling memuliakan untuk pembelajaran yang kondusif, interaktif, dan memotivasi peserta didik bereks plorasi, berekspresi, dan kolaborasi.</p>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-cyan-500 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <p class="text-gray-700 text-sm">optimalisasi <strong>ruang fisik</strong> sebagai proses interaksi langsung dalam menciptakan suasana belajar yang kondusif, meningkatkan kenyamanan, serta mendukung PM seperti ruang kelas, laboratorium, ruang konseling, lingkungan sekolah, perpustakaan, lingkungan/alam sekitar, ruang seni, ruang praktik keterampilan, ruang ibadah, aula/auditorium, museum, dan lainnya</p>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-cyan-500 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <p class="text-gray-700 text-sm">pemanfaatan <strong>ruang virtual</strong> untuk interaksi, transfer ilmu, penilaian pembelajaran tanpa keterbatasan ruang fisik, seperti desain pembelajaran daring, platform pembelajaran daring/<em>hybrid</em>, dan penilaian daring, dan lainnya.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder for future content if needed -->
+                        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 flex items-center justify-center">
+                            <p class="text-gray-400 italic text-center">Ruang untuk konten tambahan atau ilustrasi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pemanfaatan Digital Detail Section -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-3xl font-bold text-primary">Kerangka Pembelajaran</h2>
+                    <span class="text-2xl">▸</span>
+                    <h2 class="text-3xl font-bold text-cyan-500">Pemanfaatan Digital</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Left Side: Description -->
+                    <div class="bg-gradient-to-br from-accent-50 to-white rounded-xl p-8 border border-accent-100">
+                        <p class="text-gray-700 leading-relaxed text-lg mb-6">
+                            Teknologi digital dapat dimanfaatkan dalam perencanaan, pelaksanaan, dan asesmen pembelajaran. Peserta didik mendapatkan pengalaman belajar yang lebih <strong>interaktif, fleksibel, dan kolaboratif.</strong>
+                        </p>
+                    </div>
+
+                    <!-- Right Side: Three Categories -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Contoh:</h3>
+                        
+                        <!-- Perencanaan Pembelajaran -->
+                        <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-accent mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-1">Perencanaan Pembelajaran:</h4>
+                                    <p class="text-sm text-gray-600">merancang dan mengelola kelas digital, manajemen perencanaan pembelajaran berbasis proyek), desain bahan ajar visual dan infografis, pembuatan konten interaktif seperti kuis dan simulasi, pemanfaatan kecerdasan artifisial, serta aplikasi desain instruksional, dan perencanaan pembelajaran lainnya.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pelaksanaan Pembelajaran -->
+                        <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-cyan-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-1">Pelaksanaan Pembelajaran:</h4>
+                                    <p class="text-sm text-gray-600">pembelajaran sinkronus, kolaborasi daring, pembelajaran asinkronus, laman sumber belajar, perpustakaan digital, pemanfaatan kecerdasan artifisial, video edukasi, multimedia Interaktif, simulasi dan animasi, gamifikasi dan kuis, serta sumber lainnya.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Asesmen Pembelajaran -->
+                        <div class="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 mb-1">Asesmen Pembelajaran:</h4>
+                                    <p class="text-sm text-gray-600">pembuatan tes otomatis, evaluasi orisinalitas dan kualitas tulisan, tes formatif berbasis interaktif, pemanfaatan kecerdasan artifisial, pengelolaan portofolio digital, dan sebagainya.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -454,6 +531,31 @@
                         backLink.classList.remove('text-white', 'hover:text-primary-200');
                         backLink.classList.add('text-gray-700', 'hover:text-primary');
                     }
+
+                    // Change user dropdown colors (if authenticated)
+                    @auth
+                    const userName = navbar.querySelector('#userMenuButton .text-white.font-semibold');
+                    const userEmail = navbar.querySelector('#userMenuButton .text-white\\/80');
+                    const userIcon = navbar.querySelector('#userMenuIcon');
+                    const userMenuBtn = navbar.querySelector('#userMenuButton');
+                    
+                    if (userName) {
+                        userName.classList.remove('text-white');
+                        userName.classList.add('text-gray-900');
+                    }
+                    if (userEmail) {
+                        userEmail.classList.remove('text-white/80');
+                        userEmail.classList.add('text-gray-500');
+                    }
+                    if (userIcon) {
+                        userIcon.classList.remove('text-white');
+                        userIcon.classList.add('text-gray-500');
+                    }
+                    if (userMenuBtn) {
+                        userMenuBtn.classList.remove('hover:bg-white/20');
+                        userMenuBtn.classList.add('hover:bg-gray-100');
+                    }
+                    @endauth
                 } else {
                     // At hero - dark navbar
                     navbar.classList.remove('bg-white/90', 'border-gray-200', 'shadow-lg');
@@ -476,9 +578,62 @@
                         backLink.classList.remove('text-gray-700', 'hover:text-primary');
                         backLink.classList.add('text-white', 'hover:text-primary-200');
                     }
+
+                    // Change user dropdown colors back (if authenticated)
+                    @auth
+                    const userName2 = navbar.querySelector('#userMenuButton .text-gray-900.font-semibold');
+                    const userEmail2 = navbar.querySelector('#userMenuButton .text-gray-500');
+                    const userIcon2 = navbar.querySelector('#userMenuIcon');
+                    const userMenuBtn2 = navbar.querySelector('#userMenuButton');
+                    
+                    if (userName2) {
+                        userName2.classList.remove('text-gray-900');
+                        userName2.classList.add('text-white');
+                    }
+                    if (userEmail2) {
+                        userEmail2.classList.remove('text-gray-500');
+                        userEmail2.classList.add('text-white/80');
+                    }
+                    if (userIcon2) {
+                        userIcon2.classList.remove('text-gray-500');
+                        userIcon2.classList.add('text-white');
+                    }
+                    if (userMenuBtn2) {
+                        userMenuBtn2.classList.remove('hover:bg-gray-100');
+                        userMenuBtn2.classList.add('hover:bg-white/20');
+                    }
+                    @endauth
                 }
             });
         });
+
+        // User Menu Dropdown (only if user is authenticated)
+        @auth
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenuDropdown = document.getElementById('userMenuDropdown');
+        const userMenuIcon = document.getElementById('userMenuIcon');
+
+        if (userMenuButton && userMenuDropdown) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenuDropdown.classList.toggle('hidden');
+                userMenuIcon.classList.toggle('rotate-180');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                    userMenuIcon.classList.remove('rotate-180');
+                }
+            });
+        }
+
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
+        @endauth
     </script>
 </body>
 </html>

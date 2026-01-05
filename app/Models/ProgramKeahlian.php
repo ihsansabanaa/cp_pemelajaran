@@ -15,8 +15,8 @@ class ProgramKeahlian extends Model
         return $this->belongsTo(BidangKeahlian::class, 'id_bidang', 'id_bidang');
     }
 
-    public function kompetensiKeahlian()
+    public function konsentrasiKeahlian()
     {
-        return $this->hasMany(KompetensiKeahlian::class, 'id_program', 'id_program');
+        return $this->hasMany(KonsentrasiKeahlian::class, 'id_program', 'id_program');
     }
 }

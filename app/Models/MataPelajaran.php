@@ -8,11 +8,11 @@ class MataPelajaran extends Model
 {
     protected $table = 'mata_pelajaran';
     protected $primaryKey = 'id_mapel';
-    protected $fillable = ['id_kompetensi', 'id_fase', 'nama_mapel', 'jenis_mapel'];
+    protected $fillable = ['id_konsentrasi', 'id_fase', 'nama_mapel', 'jenis_mapel'];
 
-    public function kompetensiKeahlian()
+    public function konsentrasiKeahlian()
     {
-        return $this->belongsTo(KompetensiKeahlian::class, 'id_kompetensi', 'id_kompetensi');
+        return $this->belongsTo(KonsentrasiKeahlian::class, 'id_konsentrasi', 'id_konsentrasi');
     }
 
     public function fase()

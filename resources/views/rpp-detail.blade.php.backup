@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Detail RPP - EduPlan</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #10B981;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            max-width: 100vw;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn-primary { background-color: #4F46E5; color: white; }
+        .btn-primary:hover { background-color: #4338CA; }
+        .btn-secondary { background-color: #10B981; color: white; }
+        .btn-secondary:hover { background-color: #059669; }
+        .btn-error { background-color: #EF4444; color: white; }
+        .btn-error:hover { background-color: #DC2626; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #4b5563;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .nav-link:hover { background-color: #f3f4f6; color: #4F46E5; }
+        .nav-link.active { background-color: #eef2ff; color: #4F46E5; font-weight: 600; }
+
+        .main-content {
+            margin-top: 4rem;
+            margin-left: 0;
+            height: calc(100vh - 4rem);
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .main-content { margin-left: 16rem; }
+        }
+
+        .page-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .print-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        @media print {
+            body { background: white; position: static; overflow: visible; }
+            .no-print { display: none !important; }
+            .print-content { padding: 0; border-radius: 0; }
+            .main-content { margin: 0; padding: 0; height: auto; overflow: visible; }
+        }
+    </style>
+</head>
+<body class="page-container">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 -translate-x-full no-print" id="sidebar">
+        <!-- Logo -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/kemdiktisaintek-logo.svg') }}" alt="Logo Kemdikbudristek" class="h-10 w-auto">
+                <div>
+                    <h1 class="font-bold text-gray-900">EduPlan</h1>
+                    <p class="text-xs text-gray-500">Kurikulum Merdeka</p>
+                </div>
+            </div>
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            <a href="{{ route('dashboard') }}" class="nav-link">
+                <i class="fas fa-home w-5 text-center"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ route('rpp.index') }}" class="nav-link active">
+                <i class="fas fa-book-open w-5 text-center"></i>
+                <span>RPP Saya</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-graduation-cap w-5 text-center"></i>
+                <span>Mata Pelajaran</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-chart-line w-5 text-center"></i>
+                <span>Analisis</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-cog w-5 text-center"></i>
+                <span>Pengaturan</span>
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-gray-100 mt-auto">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold flex-shrink-0" style="background-color: var(--primary);">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->name }}</p>
+                    <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+                </div>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="text-gray-400 hover:text-red-500 transition-colors focus:outline-none">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile header -->
+    <header class="fixed top-0 right-0 left-0 bg-white border-b border-gray-200 z-40 lg:left-64 transition-all duration-300 no-print">
+        <div class="flex items-center justify-between h-16 px-4 lg:px-6">
+            <div class="flex items-center gap-4">
+                <button id="openSidebar" class="text-gray-600 hover:text-gray-900 focus:outline-none lg:hidden">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h1 class="text-lg font-bold text-gray-900 hidden lg:block">Detail RPP</h1>
+            </div>
+
+            <div class="flex-1 flex justify-end items-center gap-4">
+                <div class="lg:hidden">
+                    <div class="w-9 h-9 rounded-full text-white flex items-center justify-center font-semibold text-sm" style="background-color: var(--primary);">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container mx-auto px-4 max-w-full">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 no-print">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                    <div class="text-3xl font-bold" style="color: var(--primary);">{{ $rpp->jumlah_pertemuan ?? 0 }}</div>
+                    <div class="text-sm text-gray-600 mt-1">Pertemuan</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                    <div class="text-3xl font-bold text-green-600">{{ $rpp->jam_pelajaran ?? 0 }}</div>
+                    <div class="text-sm text-gray-600 mt-1">Jam Pelajaran</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                    <div class="text-3xl font-bold text-purple-600">{{ is_array($rpp->dimensi_profil) ? count($rpp->dimensi_profil) : 0 }}</div>
+                    <div class="text-sm text-gray-600 mt-1">Dimensi Profil</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                    <div class="text-3xl font-bold text-orange-600">{{ is_array($rpp->langkah_pembelajaran) ? count($rpp->langkah_pembelajaran) : 0 }}</div>
+                    <div class="text-sm text-gray-600 mt-1">Langkah</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-6 no-print">
+                <div class="flex items-center gap-2">
+                    <button onclick="copyToClipboard()" class="btn btn-primary" style="background-color: #6366f1;">
+                        <i class="fas fa-copy"></i>
+                        Salin Teks
+                    </button>
+                    <button onclick="shareRPP()" class="btn btn-primary" style="background-color: #8b5cf6;">
+                        <i class="fas fa-share-alt"></i>
+                        Bagikan
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="downloadPDF()" class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                    <button onclick="window.print()" class="btn btn-secondary">
+                        <i class="fas fa-print"></i>
+                        Print
+                    </button>
+                    <button onclick="deleteRpp()" class="btn btn-error">
+                        <i class="fas fa-trash"></i>
+                        Hapus
+                    </button>
+                </div>
+            </div>
+
+            <!-- Info Banner -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-6 overflow-hidden no-print">
+                <div class="relative bg-gradient-to-br from-primary/5 via-primary/10 to-transparent">
+                    <div class="relative px-6 py-6 sm:px-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full mb-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                                    <i class="fas fa-file-alt text-sm"></i>
+                                    <span class="text-sm font-semibold">Detail RPP</span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900 mb-1">
+                                    {{ $rpp->konsentrasiKeahlian->nama_konsentrasi ?? 'RPP' }}
+                                </h2>
+                                <p class="text-gray-600 text-sm">
+                                    {{ $rpp->bidangKeahlian->nama_bidang ?? '-' }} • 
+                                    {{ $rpp->programKeahlian->nama_program ?? '-' }} •
+                                    Fase {{ $rpp->fase->nama_fase ?? '-' }}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                                    <i class="fas fa-check-circle"></i> Tersimpan
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RPP Content -->
+            <div id="rppContent" class="print-content bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+            <!-- Header (untuk print) -->
+            <div class="text-center mb-8 pb-6 border-b-2 border-gray-200">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                    RENCANA PELAKSANAAN PEMBELAJARAN (RPP)
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {{ $rpp->konsentrasiKeahlian->nama_konsentrasi ?? '-' }}
+                </p>
+                <p class="text-sm text-gray-500 mt-2">
+                    {{ $rpp->bidangKeahlian->nama_bidang ?? '-' }} - 
+                    {{ $rpp->programKeahlian->nama_program ?? '-' }}
+                </p>
+            </div>
+
+            <!-- Section I: Informasi Umum -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center" style="color: var(--primary);">
+                    <span class="rounded-full w-10 h-10 flex items-center justify-center mr-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--primary);">I</span>
+                    INFORMASI UMUM
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 p-5 rounded-xl border border-blue-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-blue-600 font-semibold">Fase Pembelajaran</p>
+                                <p class="text-lg font-bold text-gray-800">{{ $rpp->fase->nama_fase ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100/50 p-5 rounded-xl border border-purple-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-purple-600 font-semibold">Jumlah Pertemuan</p>
+                                <p class="text-lg font-bold text-gray-800">{{ $rpp->jumlah_pertemuan ?? '-' }} Pertemuan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-green-100/50 p-5 rounded-xl border border-green-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-green-600 font-semibold">Jam Pelajaran</p>
+                                <p class="text-lg font-bold text-gray-800">{{ $rpp->jam_pelajaran ?? '-' }} JP</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100/50 p-5 rounded-xl border border-orange-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center text-white">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-orange-600 font-semibold">Tanggal Dibuat</p>
+                                <p class="text-lg font-bold text-gray-800">{{ $rpp->created_at->format('d M Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section II: Dimensi Profil -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center" style="color: var(--primary);">
+                    <span class="rounded-full w-10 h-10 flex items-center justify-center mr-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--primary);">II</span>
+                    DIMENSI PROFIL PELAJAR PANCASILA
+                </h2>
+                <div class="p-6 rounded-lg" style="background-color: rgba(79, 70, 229, 0.05);">
+                    @if($rpp->dimensi_profil && is_array($rpp->dimensi_profil))
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($rpp->dimensi_profil as $dimensi)
+                                <span class="px-3 py-1.5 rounded-lg text-white font-medium" style="background-color: var(--primary);">{{ $dimensi }}</span>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-600">-</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Section III: Tujuan Pembelajaran -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center" style="color: var(--primary);">
+                    <span class="rounded-full w-10 h-10 flex items-center justify-center mr-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--primary);">III</span>
+                    TUJUAN PEMBELAJARAN
+                </h2>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white flex-shrink-0 mt-1">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ $rpp->tujuan_pembelajaran ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section IV: Praktik Pedagogis -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center" style="color: var(--primary);">
+                    <span class="rounded-full w-10 h-10 flex items-center justify-center mr-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--primary);">IV</span>
+                    PRAKTIK PEDAGOGIS
+                </h2>
+                
+                <!-- Praktik Pedagogis Text -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 mb-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0 mt-1">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800 mb-2">Deskripsi Praktik Pedagogis:</h3>
+                            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ $rpp->praktik_pedagogis ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Strategi Pembelajaran -->
+                    @if($rpp->strategi_pembelajaran && is_array($rpp->strategi_pembelajaran) && count($rpp->strategi_pembelajaran) > 0)
+                    <div class="bg-white p-5 rounded-xl border-2 border-emerald-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-lightbulb text-emerald-600"></i>
+                            <h3 class="font-bold text-gray-800">Strategi Pembelajaran</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($rpp->strategi_pembelajaran as $strategi)
+                                <span class="px-3 py-1.5 rounded-lg text-white font-medium text-sm shadow-sm" style="background-color: var(--secondary);">
+                                    <i class="fas fa-check-circle text-xs"></i> {{ $strategi }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Metode Pembelajaran -->
+                    @if($rpp->metode_pembelajaran && is_array($rpp->metode_pembelajaran) && count($rpp->metode_pembelajaran) > 0)
+                    <div class="bg-white p-5 rounded-xl border-2 border-blue-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-tasks text-blue-600"></i>
+                            <h3 class="font-bold text-gray-800">Metode Pembelajaran</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($rpp->metode_pembelajaran as $metode)
+                                <span class="px-3 py-1.5 rounded-lg bg-blue-500 text-white font-medium text-sm shadow-sm">
+                                    <i class="fas fa-check-circle text-xs"></i> {{ $metode }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Kemitraan -->
+                    @if($rpp->kemitraan_pembelajaran && is_array($rpp->kemitraan_pembelajaran) && count($rpp->kemitraan_pembelajaran) > 0)
+                    <div class="bg-white p-5 rounded-xl border-2 border-amber-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-handshake text-amber-600"></i>
+                            <h3 class="font-bold text-gray-800">Kemitraan Pembelajaran</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($rpp->kemitraan_pembelajaran as $kemitraan)
+                                <span class="px-3 py-1.5 rounded-lg bg-amber-500 text-white font-medium text-sm shadow-sm">
+                                    <i class="fas fa-users text-xs"></i> {{ $kemitraan }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Lingkungan -->
+                    <div class="bg-white p-5 rounded-xl border-2 border-teal-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-school text-teal-600"></i>
+                            <h3 class="font-bold text-gray-800">Lingkungan Pembelajaran</h3>
+                        </div>
+                        <p class="text-gray-800">{{ $rpp->lingkungan_pembelajaran ?? '-' }}</p>
+                    </div>
+
+                    <!-- Digital -->
+                    @if($rpp->pemanfaatan_digital)
+                    <div class="bg-white p-5 rounded-xl border-2 border-purple-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-laptop text-purple-600"></i>
+                            <h3 class="font-bold text-gray-800">Pemanfaatan Digital</h3>
+                        </div>
+                        <p class="text-gray-800">{{ $rpp->pemanfaatan_digital }}</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Section V: Langkah Pembelajaran (AI Generated) -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 flex items-center" style="color: var(--primary);">
+                    <span class="rounded-full w-10 h-10 flex items-center justify-center mr-3" style="background-color: rgba(79, 70, 229, 0.1); color: var(--primary);">V</span>
+                    LANGKAH PEMBELAJARAN
+                    <span class="ml-3 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs rounded-full font-medium">
+                        <i class="fas fa-magic"></i> AI Generated
+                    </span>
+                </h2>
+                
+                @if($rpp->langkah_pembelajaran)
+                    @if(is_array($rpp->langkah_pembelajaran))
+                        <div class="space-y-4">
+                            @foreach($rpp->langkah_pembelajaran as $index => $langkah)
+                                <div class="bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-xl border-l-4 border-amber-500">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold shadow-lg">
+                                            {{ $loop->iteration }}
+                                        </div>
+                                        <h3 class="text-xl font-bold text-gray-800">Pertemuan {{ $loop->iteration }}</h3>
+                                        <span class="ml-auto px-3 py-1 bg-amber-200 text-amber-800 text-xs rounded-full font-semibold">
+                                            {{ $rpp->jam_pelajaran ?? '-' }} JP
+                                        </span>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg border border-amber-200">
+                                        <div class="prose prose-sm max-w-none">
+                                            <div class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ is_string($langkah) ? $langkah : json_encode($langkah, JSON_PRETTY_PRINT) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-xl border-l-4 border-amber-500">
+                            <div class="bg-white p-5 rounded-lg border border-amber-200">
+                                <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ $rpp->langkah_pembelajaran }}</p>
+                            </div>
+                        </div>
+                    @endif
+                @else
+                    <div class="bg-gray-50 p-8 rounded-xl border-2 border-dashed border-gray-300 text-center">
+                        <i class="fas fa-info-circle text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600">Belum ada langkah pembelajaran yang tersedia.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-12 pt-6 border-t-2 border-gray-200">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-sm text-gray-600">Dibuat oleh:</p>
+                        <p class="font-bold text-gray-800">{{ $rpp->user->name ?? '-' }}</p>
+                        <p class="text-sm text-gray-500">{{ $rpp->created_at->format('d F Y') }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600 mb-8">Mengetahui,</p>
+                        <p class="font-bold text-gray-800 border-t-2 border-gray-800 pt-2 px-8">
+                            Kepala Sekolah
+                        </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar Toggle
+        document.getElementById('openSidebar')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+        });
+
+        document.getElementById('closeSidebar')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('openSidebar');
+            if (window.innerWidth < 1024 && !sidebar.contains(event.target) && event.target !== openBtn) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        function copyToClipboard() {
+            const content = document.getElementById('rppContent');
+            const textContent = content.innerText;
+            
+            navigator.clipboard.writeText(textContent).then(() => {
+                // Show success message
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+                btn.style.backgroundColor = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.backgroundColor = '#6366f1';
+                }, 2000);
+            }).catch(err => {
+                alert('Gagal menyalin teks: ' + err);
+            });
+        }
+
+        function shareRPP() {
+            const shareData = {
+                title: 'RPP - {{ $rpp->konsentrasiKeahlian->nama_konsentrasi ?? "RPP" }}',
+                text: 'Lihat RPP yang telah saya buat untuk {{ $rpp->konsentrasiKeahlian->nama_konsentrasi ?? "pembelajaran" }}',
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch(err => console.log('Error sharing:', err));
+            } else {
+                // Fallback: copy URL
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Link RPP berhasil disalin ke clipboard!');
+                });
+            }
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('rppContent');
+            const opt = {
+                margin: [15, 15, 15, 15],
+                filename: 'RPP_{{ Str::slug($rpp->konsentrasiKeahlian->nama_konsentrasi ?? "document") }}_{{ date("Y-m-d") }}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { 
+                    mode: ['avoid-all', 'css', 'legacy'],
+                    before: '.page-break-before',
+                    after: '.page-break-after',
+                    avoid: ['h2', 'h3', '.badge']
+                }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function deleteRpp() {
+            if (!confirm('Apakah Anda yakin ingin menghapus RPP ini? Tindakan ini tidak dapat dibatalkan.')) {
+                return;
+            }
+
+            fetch('/api/rpp/{{ $rpp->id_rpp }}', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('RPP berhasil dihapus');
+                    window.location.href = '{{ route("rpp.index") }}';
+                } else {
+                    alert('Gagal menghapus RPP: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menghapus RPP');
+            });
+        }
+    </script>
+</body>
+</html>

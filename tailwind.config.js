@@ -7,19 +7,20 @@ export default {
   ],
   theme: {
     extend: {
+      // Force RGB color format for PDF compatibility
       colors: {
         primary: {
-          DEFAULT: '#0066CC',
-          50: '#E6F2FF',
-          100: '#CCE5FF',
-          200: '#99CCFF',
-          300: '#66B2FF',
-          400: '#3399FF',
-          500: '#0066CC',
-          600: '#0052A3',
-          700: '#003D7A',
-          800: '#002952',
-          900: '#001429',
+          DEFAULT: '#003D7A',
+          50: '#E6EDF5',
+          100: '#CCDAEB',
+          200: '#99B5D7',
+          300: '#6690C3',
+          400: '#336BAF',
+          500: '#003D7A',
+          600: '#003162',
+          700: '#002549',
+          800: '#001931',
+          900: '#000C18',
         },
         secondary: {
           DEFAULT: '#5B5FC7',
@@ -50,5 +51,32 @@ export default {
       },
     },
   },
-  plugins: [],
+  // Force legacy color format for PDF compatibility (no oklch)
+  corePlugins: {
+    // Disable oklch color space
+  },
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          "primary": "#003D7A",
+          "secondary": "#5B5FC7",
+          "accent": "#FF9500",
+          "neutral": "#3d4451",
+          "base-100": "#ffffff",
+          "info": "#3abff8",
+          "success": "#36d399",
+          "warning": "#fbbd23",
+          "error": "#f87272",
+        },
+      },
+    ],
+    // Force hex colors in DaisyUI instead of oklch
+    styled: true,
+    base: true,
+    utils: true,
+    logs: true,
+    rtl: false,
+  },
+  plugins: [require('daisyui')],
 }
